@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join - Summary</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicons/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicons/favicon-64x64.png">
+
+    <link rel="apple-touch-icon" sizes="120x120" href="./assets/favicons/apple-touch-favicon/favicon-120x120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./assets/favicons/apple-touch-favicon/favicon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-favicon/favicon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="./assets/favicons/apple-touch-favicon/favicon-167x167.png">
+
+    <link rel="mask-icon" href="./assets/favicons/favicon-safari.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="./css/fonts.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/summary.css">
+    <link rel="stylesheet" href="./css/landscapeWarning.css">
+
+</head>
+
+<body onload="initSummary(); initLandscapeWarning();">
+
+    <header id="header"></header>
+
+    <main class="summary-content">
+
+
+        <div class="summary-title">
+            <h2>Join 360</h2>
+            <span class="summary-seperator"></span>
+            <h4>Key Metrics at a Glance</h4>
+            <span class="summary-seperator-mobile"></span>
+        </div>
+        <div class="summary-container">
+            <div class="summary-metrics-container">
+                <div class="summary-metrics-box">
+                    <a class="summary-box-elements summary-box-todo" href="./board.html?scrollTo=scrollToToDo">
+                        <div class="summary-box-todo-content">
+                            <div class="summary-icon-container summary-icon-todo"></div>
+                            <div class="summary-number-content">
+                                <h1 id="toDo"></h1>
+                                <h6>To-do</h6>
+                            </div>
+                        </div>
+                    </a>
+                    <a class="summary-box-elements summary-box-todo" href="./board.html?scrollTo=scrollToDone">
+                        <div class="summary-box-todo-content">
+                            <div class="summary-icon-container summary-icon-done"></div>
+                            <div class="summary-number-content">
+                                <h1 id="done"></h1>
+                                <h6>Done</h6>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="summary-metrics-box">
+                    <a class="summary-box-elements summary-box-urgent" href="./board.html">
+                        <div class="summary-box-urgent-content">
+                            <img class="summary-icon-urgent" src="./assets/icons/urgentIcon.svg" alt="">
+                            <div class="summary-number-content">
+                                <h1 id="urgent"></h1>
+                                <span class="h7">Urgent</span>
+                            </div>
+                        </div>
+                        <div class="summary-seperator-grey"></div>
+                        <div class="summary-deadline-date">
+                            <h5 id="upcomingDeadlineDate"></h5>
+                            <span id="upcomingDeadlineText" class="h7">Upcoming Deadline</span>
+                        </div>
+                    </a>
+                </div>
+                <div class="summary-metrics-box">
+                    <a class="summary-box-elements summary-box-tasks" href="./board.html">
+                        <div class="summary-box-tasks-content">
+                            <h1 id="totalTasks"></h1>
+                            <h6 id="taskBoardText"></h6>
+                        </div>
+                    </a>
+                    <a class="summary-box-elements summary-box-tasks" href="./board.html?scrollTo=scrollToInProgress">
+                        <div class="summary-box-tasks-content">
+                            <h1 id="inProgress"></h1>
+                            <h6 id="taskProgressText"></h6>
+                        </div>
+                    </a>
+                    <a class="summary-box-elements summary-box-tasks" href="./board.html?scrollTo=scrollToAwaitFeedback">
+                        <div class="summary-box-tasks-content">
+                            <h1 id="awaitFeedback"></h1>
+                            <h6>Awaiting <br> Feedback</h6>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="summary-greeting">
+                <div>
+                    <h3 id="summaryGreeting"></h3>
+                    <h1 id="summaryGreetingName" class="summary-name"></h1>
+                </div>
+            </div>
+        </div>
+        <div class="summary-greeting-mobile">
+            <div>
+                <h3 id="summaryGreetingMobile"></h3>
+                <h1 id="summaryGreetingNameMobile" class="summary-name"></h1>
+            </div>
+        </div>
+      
+    <div id="landscapeWarningMobile" class="landscape-warning"></div>
+
+    </main>
+
+    <section id="desktopSidebar" class="sidebar"></section>
+
+    <nav id="mobileNav" class="nav-mobile"></nav>
+
+    <script src="./js/templates/mainTemplate.js"></script>
+    <script src="./js/firebase.js"></script>
+    <script src="./js/index.js"></script>
+    <script src="./js/summary.js"></script>
+</body>
+
+</html>

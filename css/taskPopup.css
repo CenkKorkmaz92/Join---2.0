@@ -1,0 +1,698 @@
+.task-popup {
+  position: fixed;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  z-index: 1000;
+  align-items: center;
+}
+
+.popup-content-task {
+  gap: 24px;
+  display: flex;
+  overflow-x: auto;
+  max-height: 700px;
+  flex-direction: column;
+  width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+
+  padding: 0 20px;
+}
+
+.popup-content-edit-task {
+  overflow-x: unset;
+  max-height: 700px;
+}
+
+.popup-content-edit-task label {
+  font-size: 20px;
+}
+
+.popup-content-edit-task-form {
+  overflow-x: auto;
+}
+
+.popup-content-edit-task input {
+    padding-right: 50px !important;
+}
+
+.task-details-content {
+  background-color: #fff;
+  border-radius: 30px;
+  padding: 48px 40px;
+  gap: 24px;
+  display: flex;
+  height: 931px;
+  width: 525px;
+  max-width: 90%;
+  padding-bottom: 60px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  animation: slideIn 400ms ease-in-out;
+  transition: transform 400ms ease-in-out;
+  flex-direction: column;
+  height: fit-content;
+  max-height: calc(100% - 64px);
+
+  padding: 48px 20px;
+}
+
+.edit-task-details-content {
+  padding: 72px 20px 101px 20px;
+  animation: unset;
+}
+
+.hidden {
+  animation: slideOutToRight 0.4s ease-in-out forwards;
+  transition: background-color 75ms ease-in-out;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.popup-buttons {
+  display: flex;
+  gap: 8px;
+  position: absolute;
+  bottom: 3%;
+  right: 40px;
+}
+
+.priority-choice {
+  width: 139px;
+  width: fit-content;
+  height: 32px;
+  padding: 4px 18px;
+  background: rgba(255, 255, 255, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: Inter;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: left;
+  color: rgba(0, 0, 0, 1);
+}
+
+.close-popup-button {
+  top: 11%;
+  right: 0%;
+  left: auto;
+  cursor: pointer;
+}
+
+.close-popup-button:hover,
+.close-popup-edit-button:hover {
+  background-color: rgb(238 231 231);
+  border-radius: 56px;
+}
+
+.sub-hover:hover,
+.subtask-item-popup:hover {
+  background-color: rgb(238 231 231);
+  border-radius: 10px;
+}
+.sub-hover {
+  padding-left: 0 !important;
+  gap: 10px !important;
+}
+.task-details-content h2 {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 43.2px;
+  text-align: left;
+}
+
+.task-details-content p {
+  font-size: 20px;
+  color: #2a3038;
+}
+
+.task-info {
+  display: flex;
+  gap: 25px;
+}
+
+.due-date,
+.priority {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.due-date span {
+  font-size: 20px;
+}
+
+.contacts {
+  display: flex;
+  flex-direction: column;
+
+  padding: 6px 0px;
+}
+
+.assigned-to-title,
+.subtasks-title {
+  margin-bottom: 10px;
+}
+
+.contact-logo {
+  width: 42px;
+  height: 42px;
+  min-height: 42px;
+  min-width: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+}
+
+.contact-item-assigned span {
+  font-size: 19px;
+}
+
+.subtasks {
+  display: flex;
+  gap: 10px;
+  gap: 4px;
+  flex-direction: column;
+  padding: 6px 0px;
+}
+
+.contact-item-assigned {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 56px;
+  padding: 7px 16px;
+}
+
+.subtask-item-popup {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  height: fit-content;
+  padding: 6px 16px;
+  gap: 16px;
+  justify-content: flex-start;
+}
+
+.subtask-item-popup img {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+}
+
+.task-title {
+  width: 100%;
+  font-size: 47px !important;
+  font-weight: 700;
+  line-height: 56.4px;
+  text-align: left;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+.task-description {
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  font-size: 20px;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  height: 36px;
+}
+
+.delete-button,
+.edit-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  width: 82px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.delete-button:hover span, .edit-button:hover span {
+  color: var(--clr-light-blue);
+  font-weight: 700;
+}
+
+.task-popup-delete-icon {
+  width: 24px;
+  height: 24px;
+  min-height: 24px;
+  min-width: 24px;
+  background-image: url("../assets/icons/delete.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.delete-button:hover .task-popup-delete-icon {
+  background-image: url("../assets/icons/deleteContactActive.svg");
+}
+
+.task-popup-edit-icon {
+  background-image: url("../assets/icons/edit.svg");
+}
+
+.edit-button:hover .task-popup-edit-icon {
+  background-image: url("../assets/icons/editContactsActive.svg");
+}
+
+
+.technical-task {
+  background-color: #1fd7c1;
+  width: 210px !important;
+}
+
+.user-story {
+  background-color: #0038ff;
+}
+
+.task-category {
+  width: 164px;
+  height: 36px;
+  padding: 4px 24px;
+  gap: 10px;
+  border-radius: 10px;
+}
+
+.task-category span {
+  font-family: Inter;
+  font-size: 23px;
+  font-weight: 400;
+  line-height: 27.6px;
+  text-align: left;
+  color: rgba(255, 255, 255, 1);
+}
+
+.popup-content-edit-task-form::-webkit-scrollbar {
+  width: 8px;
+}
+
+.popup-content-edit-task-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.popup-content-edit-task-form::-webkit-scrollbar-thumb {
+  background-color: #a8a8a8;
+  border-radius: 4px;
+  border: 1px solid #f6f7f8;
+}
+
+.popup-content-edit-task-form::-webkit-scrollbar-thumb:hover {
+  cursor: grab;
+}
+
+.popup-content-edit-task-form::-webkit-scrollbar-thumb:active {
+  cursor: grabbing;
+}
+
+.edit-task-subtasks {
+  overflow-y: unset;
+}
+
+.edit-task-ok-button {
+  position: absolute !important;
+  bottom: 16px !important;
+  right: 40px !important;
+  width: 89px;
+}
+
+#editForm {
+  width: 100% !important;
+}
+
+.close-popup-edit-button {
+  display: flex;
+  position: absolute;
+  right: 40px;
+  top: 32px;
+  cursor: pointer;
+}
+
+.priority-buttons {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.prio-btn {
+  width: 136px;
+  height: 56px;
+  padding: 16px 10px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 4px 0px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: Inter;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: left;
+  color: rgba(0, 0, 0, 1);
+}
+
+.prio-btn.urgent {
+  background-color: rgba(255, 61, 0, 1);
+  color: rgba(255, 255, 255, 1);
+  font-family: "Inter";
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 25.2px;
+  text-align: left;
+}
+
+.prio-btn.medium {
+  background-color: rgba(255, 168, 0, 1);
+  color: rgba(255, 255, 255, 1);
+  font-family: "Inter";
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 25.2px;
+  text-align: left;
+}
+
+.prio-btn.low {
+  background-color: rgba(122, 226, 41, 1);
+  color: rgba(255, 255, 255, 1);
+  font-family: "Inter";
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 25.2px;
+  text-align: left;
+}
+
+.prio-btn:hover {
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.prio-btn.selected:hover {
+  box-shadow: none;
+}
+
+.prio-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+#delete-button {
+  position: absolute;
+  bottom: -4%;
+  right: 4%;
+}
+
+.edit-delete-icons-edit {
+  display: flex;
+  gap: 4px;
+}
+
+#delete-button p {
+  color: rgb(255, 255, 255);
+}
+
+
+@media (max-width: 850px) {
+  .task-details-content {
+    height: fit-content;
+    max-height: calc(100% - 160px);
+    padding: 48px 24px;
+    padding: 48px 12px;
+  }
+
+  .popup-content-task {
+    padding: 0 12px;
+    gap: 16px;
+  }
+
+  .popup-header {
+    padding: 0 12px;
+  }
+
+  .edit-task-details-content {
+    padding: 64px 12px 80px 12px;
+  }
+  .close-popup-edit-button {
+    top: 24px;
+  }
+
+  .close-popup-edit-button {
+    right: 24px;
+  }
+
+  .task-category {
+    height: 32px;
+    width: fit-content !important;
+    padding: 0px 16px;
+    display: flex;
+    align-items: center;
+  }
+
+  .task-category span {
+    font-size: 16px;
+  }
+
+  .task-title {
+    font-size: 36px !important;
+    line-height: 43.2px;
+  }
+
+  .popup-buttons {
+    bottom: 18px;
+    right: 20px;
+  }
+  .prio-btn {
+    width: 121.33px !important;
+    height: 41px;
+    font-size: 16px;
+    line-height: 19.2px;
+    padding: 16px 0;
+  }
+  .prio-btn.urgent {
+    background-color: rgba(255, 61, 0, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 16px;
+    line-height: 19.2px;
+  }
+
+  .prio-btn.medium {
+    background-color: rgba(255, 168, 0, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 16px;
+    line-height: 19.2px;
+  }
+
+  .prio-btn.low {
+    background-color: rgba(122, 226, 41, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 16px;
+    line-height: 19.2px;
+  }
+  .popup-content-edit-task label {
+    font-size: 16px;
+  }
+  .task-details-content p {
+    font-size: 16px;
+  }
+  .due-date span {
+    font-size: 16px;
+  }
+  .contact-item-assigned span {
+    font-size: 16px !important;
+  }
+  .contact-search-edit::placeholder {
+    font-size: 16px;
+  }
+  .popup-content-edit-task input {
+    font-size: 16px;
+  }
+  .popup-content-edit-task textarea {
+    font-size: 16px;
+  }
+  .contact-list-edit span {
+    font-size: 16px !important;
+  }
+  .edit-task-ok-button {
+    bottom: 16px !important;
+    right: 24px !important;
+    width: 89px;
+  }
+  .edit-task-ok-button p {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 500px) {
+  .prio-btn {
+    width: 100px !important;
+    height: 41px !important;
+    font-size: 14px;
+    line-height: 19.2px;
+    padding: 16px 0;
+  }
+  .prio-btn.urgent {
+    background-color: rgba(255, 61, 0, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 14px;
+    line-height: 19.2px;
+  }
+
+  .prio-btn.medium {
+    background-color: rgba(255, 168, 0, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 14px;
+    line-height: 19.2px;
+  }
+
+  .prio-btn.low {
+    background-color: rgba(122, 226, 41, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 14px;
+    line-height: 19.2px;
+  }
+  .task-title {
+    font-size: 30px !important;
+    line-height: 36px;
+}
+}
+
+@media (max-width: 410px) {
+  .prio-btn {
+    width: 90px !important;
+    height: 41px !important;
+    font-size: 12px;
+    line-height: 19.2px;
+    padding: 16px 0;
+  }
+  .prio-btn.urgent {
+    background-color: rgba(255, 61, 0, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 12px;
+    line-height: 19.2px;
+  }
+
+  .prio-btn.medium {
+    background-color: rgba(255, 168, 0, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 12px;
+    line-height: 19.2px;
+  }
+
+  .prio-btn.low {
+    background-color: rgba(122, 226, 41, 1);
+    color: rgba(255, 255, 255, 1);
+    font-family: "Inter";
+    font-weight: 700;
+    text-align: left;
+    font-size: 12px;
+    line-height: 19.2px;
+  }
+  .prio-btn img {
+    width: 20px;
+    height: 20px;
+  }
+  .popup-content-task {
+    padding: 0 8px;
+  }
+  .task-details-content {
+    padding: 28px 8px 48px 8px;
+    gap: 16px;
+  }
+  .popup-header {
+    padding: 0 8px;
+  }
+  .edit-task-details-content {
+    padding: 64px 8px 80px 8px;
+  }
+  .edit-task-ok-button {
+    right: 16px !important;
+  }
+  .close-popup-edit-button {
+    right: 16px;
+  }
+}
+
+@media (max-width: 370px) {
+  .contact-item-assigned {
+    padding: 7px 6px;
+  }
+
+  .contact-logo {
+    margin-right: 0px;
+  }
+
+  .popup-buttons {
+    bottom: 2%;
+    right: 16px;
+  }
+}

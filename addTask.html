@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join - Add Task</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicons/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicons/favicon-64x64.png">
+
+    <link rel="apple-touch-icon" sizes="120x120" href="./assets/favicons/apple-touch-favicon/favicon-120x120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./assets/favicons/apple-touch-favicon/favicon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-favicon/favicon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="./assets/favicons/apple-touch-favicon/favicon-167x167.png">
+
+    <link rel="mask-icon" href="./assets/favicons/favicon-safari.svg" color="#5bbad5">
+
+    <link rel="stylesheet" href="./css/fonts.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/addTask.css">
+    <link rel="stylesheet" href="./css/addTaskResponsive.css">
+    <link rel="stylesheet" href="./css/landscapeWarning.css">
+
+</head>
+
+<body onload="init(); initLandscapeWarning();">
+
+    <header id="header"></header>
+    <div class="add-task-content">
+        <div class="add-task-title">
+            <h1> Add Task</h1>
+        </div>
+        <div id="recipeForm" class="add-task-container">
+            <div class="add-task-left">
+               
+                <div class="input-group">
+                    <label for="title">Title<span class="red-color">*</span></label>
+                    <input type="text" id="title" class="input-field" required minlength="3" maxlength="50"
+                        placeholder="Enter a title">
+                </div>
+
+                <div class="input-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" class="text-area" minlength="10" maxlength="400"
+                        placeholder="Enter a description"></textarea>
+                </div>
+
+                <div class="assigned-to">
+                    <div class="search-container">
+                        <input type="text" id="contact-search" class="contact-search" minlength="20"
+                            placeholder="Select contacts to assign" oninput="filterContacts()">
+
+                        <button id="toggle-list" class="toggle-list" onclick="toggleContactList()">
+                            <img src="./assets/icons/arrow_drop_down.svg" alt="Dropdown Icon" id="dropdown-assigned"
+                                class="dropdown-icon">
+                        </button>
+                    </div>
+                    <div id="contact-list" class="contact-list hidden">
+                    </div>
+                    <div id="selected-contacts" class="selected-contacts">
+                    </div>
+                </div>
+            </div>
+
+            <div class="add-task-vertical-line"></div>
+
+            <div class="add-task-right">
+
+                <div class="due-date-section">
+                    <div class="input-group">
+                        <label for="due-date">Due date <span class="required">*</span></label>
+                        <input type="text" id="due-date" class="input-field" placeholder="dd/mm/yyyy"
+                            onfocus="(this.type='date'); this.min = new Date().toISOString().split('T')[0]"
+                            onblur="(this.type='text')" required>
+                    </div>
+                </div>
+
+                <div class="priority-section">
+                    <div class="input-group">
+                        <p>Priority</p>
+                        <div class="priority-buttons">
+                            <button id="urgent-button" class="priority-button" onclick="setPriority('urgent')">
+                                Urgent <img src="./assets/icons/urgent.svg" alt="Urgent">
+                            </button>
+                            <button id="medium-button" class="priority-button" onclick="setPriority('medium')">
+                                Medium <img src="./assets/icons/medium.svg" alt="Medium">
+                            </button>
+                            <button id="low-button" class="priority-button" onclick="setPriority('low')">
+                                Low <img src="./assets/icons/low.svg" alt="Low">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="category-section">
+                    <div class="input-group" id="category-groupe">
+                        <label for="category">Category <span class="required">*</span></label>
+                        <div class="category-field" id="category-field" onclick="toggleCategoryDropdown()">
+                            <button id="toggle-list" class="toggle-list">
+                                <img src="./assets/icons/arrow_drop_down.svg" alt="Dropdown Icon" id="dropdown-assigned"
+                                    class="dropdown-icon dropdown-icon-category">
+                            </button>
+                            <input type="text" id="category" class="category" placeholder="Select task category"
+                                required readonly>
+                        </div>
+                        <div id="category-dropdown" class="category-dropdown">
+                            <div onclick="selectCategory('Technical Task')">Technical Task</div>
+                            <div onclick="selectCategory('User Story')">User Story</div>
+                        </div>
+                    </div>
+                </form>
+
+                <form class="subtasks-section">
+                    <div class="input-group">
+                        <p>Subtasks</p>
+                        <div class="subtask-input input-group">
+                            <input type="text" id="subtask-input" class="input-field" placeholder="Add new subtask"
+                                minlength="5" maxlength="30">
+                            <div class="edit-delete right-position" style="display: none ;">
+                                <img src="./assets/icons/reset.svg" alt="Reset" class="reset-icon"
+                                    onclick="resetSubtaskInput()">
+                                <div class="vertical-line"></div>
+                                <img src="./assets/icons/done.svg" alt="Add" class="add-icon" onclick="addSubtask()">
+                            </div>
+                            <div class="add-subtask" style="display: flex;">
+                                <img src="./assets/icons/add.svg" alt="Add" class="add-icon">
+                            </div>
+                        </div>
+
+                        <ul id="subtask-list" class="subtask-list" style="list-style-type:disc"></ul>
+                    </div>
+                </form>
+            </div>
+            <div id="taskCreatedPopup" class="taskCreatedPopup">
+                <p>
+                    Task added to board
+                    <img src="./assets/icons/boardDesktop.svg" alt="Board Icon" />
+                </p>
+            </div>
+
+        </div>
+        <div class="footer">
+            <p class="required-note"><span>*</span>This field is required</p>
+            <div class="buttons">
+                <button onclick="clearFields()" class="clear-button">
+                    <p>Clear</p>
+                    <div class="add-task-clear-icon"></div>
+                </button>
+
+                <button onclick="createTask()" class="create-button" type="submit">
+                    <p>Create task</p>
+                    <img src="./assets/icons/check.svg" alt="Check">
+                </button>
+
+            </div>
+        </div>
+    </div>
+
+    <section id="desktopSidebar" class="sidebar"></section>
+
+    <nav id="mobileNav" class="nav-mobile"></nav>
+
+    <div id="landscapeWarningMobile" class="landscape-warning"></div>
+
+    <script src="./js/templates/mainTemplate.js"></script>
+    <script src="./js/index.js"></script>
+    <script src="./js/addTask.js"></script>
+    <script src="./js/addTaskSaveAndEdit.js"></script>
+    <script src="./js/addTaskToggle.js"></script>
+    <script src="./js/board.js"></script>
+    <script src="./js/firebase.js"></script>
+    <script src="./js/templates/addTaskTemplate.js"></script>
+    <script src="./js/boardAddTask.js"></script>
+
+</body>
+
+</html>

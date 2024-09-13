@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join</title>
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicons/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicons/favicon-64x64.png">
+
+  <link rel="apple-touch-icon" sizes="120x120" href="./assets/favicons/apple-touch-favicon/favicon-120x120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="./assets/favicons/apple-touch-favicon/favicon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-favicon/favicon-180x180.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="./assets/favicons/apple-touch-favicon/favicon-167x167.png">
+
+  <link rel="mask-icon" href="./assets/favicons/favicon-safari.svg" color="#5bbad5">
+  <link rel="stylesheet" href="./css/fonts.css">
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/login.css">
+  <link rel="stylesheet" href="./css/landscapeWarning.css">
+</head>
+
+<body onload="initLogin(); initLandscapeWarning();">
+
+
+  <main id="loginContent" class="login-content">
+
+    <div id="loginAnimationBg" class="login-animation-bg"></div>
+    <div id="loginJoinLogo" class="login-join-logo"></div>
+    <div id="loginJoinLogoNoAnimation" class="login-join-logo-no-animation"></div>
+
+
+    <div class="sign-up-container">
+      <span class="sign-up-text">Not a Join user?</span>
+      <button onclick="goToSignUp()" class="sign-up-button">Sign up</button>
+    </div>
+
+    <div class="login-card">
+      <div class="login-title">
+        <h1>Log in</h1>
+        <span class="login-seperator"></span>
+      </div>
+
+      <form autocomplete="off" onsubmit="validateLoginForm(); return false;">
+        <div class="input-container">
+          <div class="login-input-fields">
+            <input id="email" placeholder="Email" class="login-input" type="email" pattern="[a-z0-9._%+\-]+@[a-z0-9\-]+\.[a-z]{2,63}$" title="Please enter a valid email address using only lowercase letters (e.g., test@domain.com)" required>
+            <div class="login-input-icon">
+              <img src="./assets/icons/mail.svg" alt="">
+            </div>
+            <div id="loginEmailExists" class="login-email-exists">
+              <span>This email address does not exist!</span>
+            </div>
+          </div>
+          <div class="login-input-fields">
+            <input oninput="updateIconOnInput(this)" id="password" placeholder="Password" class="login-input" type="password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{6,}$"
+            title="At least 6 characters, with an uppercase letter, a lowercase letter, a number, and no spaces." minlength="6" required>
+            <div class="login-input-icon">
+              <img onclick="showHidePassword()" id="passwordFieldImg" src="./assets/icons/lock.svg" alt="">
+            </div>
+          </div>
+        </div>
+        <div id="loginErrorMessage" class="login-failed-text">
+          <span>Check your email and password!</span>
+        </div>
+        <label class="login-remember">
+          <input id="rememberMeCheckbox" type="checkbox" class="login-custom-checkbox">
+          <span>Remember me</span>
+        </label>
+        <div class="login-button-container">
+          <button type="submit" class="login-button">Log in</button>
+          <button type="button" onclick="guestLogin()" class="guest-login-button">Guest Log in</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="sign-up-container-mobile">
+      <span class="sign-up-text">Not a Join user?</span>
+      <button onclick="goToSignUp()" class="sign-up-button">Sign up</button>
+    </div>
+
+    <div class="login-legal-links">
+      <a class="login-legal-link" href="#" onclick="window.open('./privacyPolicyExternal.html', '_blank'); return false;">Privacy Policy</a>
+      <a class="login-legal-link" href="#" onclick="window.open('./legalNoticeExternal.html', '_blank'); return false;">Legal notice</a>
+    </div>
+
+    <div id="landscapeWarningMobile" class="landscape-warning"></div>
+
+  </main>
+
+<script src="./js/templates/mainTemplate.js"></script> 
+<script src="./js/index.js"></script>
+<script src="./js/firebase.js"></script>
+<script src="./js/login.js"></script>
+</body>
+
+</html>

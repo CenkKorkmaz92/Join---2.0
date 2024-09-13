@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Join</title>
+  <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicons/favicon-48x48.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicons/favicon-64x64.png">
+
+  <link rel="apple-touch-icon" sizes="120x120" href="./assets/favicons/apple-touch-favicon/favicon-120x120.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="./assets/favicons/apple-touch-favicon/favicon-152x152.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-favicon/favicon-180x180.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="./assets/favicons/apple-touch-favicon/favicon-167x167.png">
+ 
+  <link rel="mask-icon" href="./assets/favicons/favicon-safari.svg" color="#5bbad5">
+  <link rel="stylesheet" href="./css/fonts.css">
+  <link rel="stylesheet" href="./css/index.css">
+  <link rel="stylesheet" href="./css/signUp.css">
+  <link rel="stylesheet" href="./css/landscapeWarning.css">
+</head>
+
+<body onload="initSignUp(); initLandscapeWarning();">
+  <main class="signup-content">
+    <div class="signup-join-logo"></div>
+    <div class="signup-card-content">
+      <form autocomplete="off" class="signup-card-form" onsubmit="validateSignUpForm(); return false;">
+        <a class="signup-link-to-login" href="./index.html">
+          <img src="./assets/icons/arrowLeft.svg" alt="">
+        </a>
+        <div class="signup-title">
+          <h1>Sign up</h1>
+          <span class="signup-seperator"></span>
+        </div>
+        <div class="signup-input-container">
+          <div class="signup-input-fields">
+            <input id="name" placeholder="Name" class="signup-input" type="text"
+              pattern="^[A-Za-zäöüÄÖÜß]{3,} [A-Za-zäöüÄÖÜß]{3,}$"
+              title="Please type your full name, with both first and last names having at least 3 letters (e.g., Max Muster)."
+              required>
+            <div class="signup-input-icon">
+              <img src="./assets/icons/person.svg" alt="">
+            </div>
+          </div>
+          <div class="signup-input-fields">
+            <input id="email" placeholder="Email" class="signup-input" type="email"
+              pattern="^[a-z0-9._%+\-]+@[a-z0-9\-]+\.[a-z]{2,63}$"
+              title="Please enter a valid email address using only lowercase letters (e.g., test@domain.com)" required>
+            <div class="signup-input-icon">
+              <img src="./assets/icons/mail.svg" alt="">
+            </div>
+            <div id="signUpEmailTaken" class="signup-email-taken">
+              <span>The email address is already taken!</span>
+            </div>
+          </div>
+          <div class="signup-input-fields">
+            <input oninput="updateIconOnInput(this)" id="password" placeholder="Password" class="signup-input"
+              type="password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{6,}$"
+              title="At least 6 characters, with an uppercase letter, a lowercase letter, a number, and no spaces."
+              minlength="6" required>
+            <div class="signup-input-icon">
+              <img onclick="showHidePassword(this)" class="signup-password-icon" src="./assets/icons/lock.svg" alt="">
+            </div>
+          </div>
+          <div class="signup-input-fields">
+            <input oninput="updateIconOnInput(this)" id="confirmPassword" placeholder="Confirm Password"
+              class="signup-input" type="password" pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?!.*\s).{6,}$"
+              title="At least 6 characters, with an uppercase letter, a lowercase letter, a number, and no spaces."
+              minlength="6" required>
+            <div class="signup-input-icon">
+              <img onclick="showHidePassword(this)" src="./assets/icons/lock.svg" alt="">
+            </div>
+          </div>
+        </div>
+        <div id="signUpErrorMessage" class="signup-failed-text">
+          <span>Your Passwords don't match!</span>
+        </div>
+        <label class="signup-accept">
+          <input type="checkbox" class="signup-custom-checkbox" required>
+          <span>I accept the <a class="signup-link-privacy" href="#"
+              onclick="window.open('./privacyPolicyExternal.html', '_blank'); return false;">Privacy policy</a></span>
+        </label>
+        <div class="signup-button-container">
+          <button class="signup-button" type="submit">Sign up</button>
+        </div>
+      </form>
+    </div>
+    <div id="signUpSuccessfull" class="signup-successful-overlay">
+      <div class="signup-successfull-container">
+        <span>You signed up successfully</span>
+      </div>
+    </div>
+
+    <div class="signup-legal-links">
+      <a class="signup-legal-link" href="#"
+        onclick="window.open('./privacyPolicyExternal.html', '_blank'); return false;">Privacy
+        Policy</a>
+      <a class="signup-legal-link" href="#" onclick="window.open('./legalNoticeExternal.html', '_blank'); return false;">Legal
+        notice</a>
+    </div>
+
+    <div id="landscapeWarningMobile" class="landscape-warning"></div>
+
+  </main>
+  <script src="./js/templates/mainTemplate.js"></script>
+  <script src="./js/index.js"></script>
+  <script src="./js/firebase.js"></script>
+  <script src="./js/signUp.js"></script>
+</body>
+
+</html>

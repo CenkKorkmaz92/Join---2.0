@@ -1,0 +1,508 @@
+.addTaskPopup {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  z-index: 1000;
+  justify-content: center;
+}
+
+.popup-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.popup-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+  background-color: #a8a8a8;
+  border-radius: 4px;
+  border: 1px solid #f6f7f8;
+}
+
+.popup-content::-webkit-scrollbar-thumb:hover {
+  cursor: grab;
+}
+
+.popup-content::-webkit-scrollbar-thumb:active {
+  cursor: grabbing;
+}
+
+.add-task-content-pop-up {
+  padding: 64px;
+}
+
+.width-pop-up {
+  width: 944px;
+}
+
+.hidden {
+  animation: slideOutToRight 1s ease-in-out;
+  transition: background-color 75ms ease-in-out;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.show {
+  display: flex !important;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateX(300%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.popup-content {
+  width: 1116px;
+  height: 870px;
+  background-color: #fff;
+  border-radius: 30px;
+  padding: 20px;
+  position: relative;
+  animation: slideIn 400ms ease-in-out;
+  transition: transform 400ms ease-in-out;
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.popup-content.hidden {
+  animation: slideOutToRight 400ms ease-in-out;
+}
+
+.close-popup {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  top: 64px;
+  left: 1044px;
+}
+
+.close-popup:hover {
+  border-radius: 50%;
+  background: #d1d1d1;
+}
+
+.add-task-container-popup {
+  display: flex;
+  justify-content: flex-start;
+  margin: 56px 0;
+  gap: 32px;
+}
+
+@media (max-height: 920px) {
+  .addTaskPopup {
+    padding: 16px;
+  }
+  .popup-content {
+    height: 100%;
+  }
+}
+
+@media (max-width: 1376px) {
+  .addTaskPopup {
+    padding: 0;
+  }
+
+  .add-task-left,
+  .add-task-right {
+    width: 45% !important;
+  }
+
+  .footer {
+    padding-top: 0px !important;
+    width: 99% !important;
+  }
+
+  .popup-content {
+    width: 80%;
+    height: unset;
+    background-color: #fff;
+    border-radius: 30px;
+    padding: 0px;
+  }
+
+  .close-popup {
+    top: 11%;
+    right: 4%;
+    left: auto;
+  }
+
+  .width-pop-up {
+    width: 100%;
+  }
+
+  .add-task-container-popup {
+    display: flex;
+    justify-content: flex-start;
+    margin: 20px 0;
+    max-height: max-content;
+    gap: 32px;
+  }
+
+  .priority-button,
+  .priority-button.urgent,
+  .priority-button.medium,
+  .priority-button.low {
+    width: 121.33px !important;
+    height: 41px !important;
+    padding: 14px 5px !important;
+    font-family: Inter !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    line-height: 19.2px !important;
+    text-align: left !important;
+  }
+
+  .priority-button.urgent,
+  .priority-button.medium,
+  .priority-button.low {
+    font-weight: 700;
+  }
+
+  .priority-buttons {
+    gap: 2px !important;
+    justify-content: flex-start;
+  }
+
+  .contact-logo {
+    width: 32px;
+    height: 32px;
+    margin-right: 5px;
+  }
+  .contact-item {
+    padding: 7px 6px !important;
+  }
+  .contact-item span {
+    font-size: 12px;
+  }
+  .priority-button.selected:hover {
+    font-weight: 700 !important;
+  }
+}
+
+@media (max-width: 1000px) {
+  .priority-button,
+  .priority-button.urgent,
+  .priority-button.medium,
+  .priority-button.low {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 850px) {
+  .priority-button,
+  .priority-button.urgent,
+  .priority-button.medium,
+  .priority-button.low {
+    font-size: 14px !important;
+  }
+  .footer {
+    width: 98% !important;
+  }
+  .addTaskPopup {
+    z-index: 10 !important;
+  }
+  .contact-logo {
+    width: 42px;
+    height: 42px;
+    margin-right: 10px;
+  }
+  .contact-item {
+    padding: 7px 16px;
+  }
+  .contact-item span {
+    font-size: 20px;
+  }
+
+  .add-task-left,
+  .add-task-right {
+    width: 100% !important;
+  }
+
+  .add-task-title {
+    padding-left: 50px;
+  }
+
+  .nav-mobile {
+    display: flex;
+    z-index: 100;
+  }
+
+  .popup-content {
+    width: 100%;
+    background-color: #f6f7f8;
+    border-radius: 0;
+    padding: 0px;
+    overflow-x: auto;
+    height: calc(100vh - 160px);
+    height: calc(100svh - 160px);
+
+    display: flex;
+  }
+
+  .addTaskPopup {
+    z-index: 1;
+  }
+
+  .add-task-container-popup {
+    flex-direction: column;
+    margin: 56px 0 20px 0;
+    gap: 16px;
+  }
+
+  .add-task-content-pop-up {
+    padding: 64px 50px 64px 50px;
+  }
+
+  .category-dropdown {
+    margin-top: -13px !important;
+  }
+
+  .due-date-section {
+    width: 100%;
+  }
+
+  label,
+  input,
+  textarea {
+    font-size: 18px;
+  }
+
+  .add-task-container {
+    flex-direction: column;
+  }
+
+  .add-task-content,
+  .footer {
+    padding-right: 50px;
+    padding-left: 50px;
+  }
+
+  .add-task-content {
+    margin-top: 80px;
+    height: calc(100vh - 160px);
+    margin-left: 0;
+    padding-bottom: 24px;
+    padding-top: 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 0px;
+    overflow-y: auto;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.2px;
+    text-align: left;
+  }
+
+  .text-area {
+    height: 88px;
+    padding: 18px 21px;
+    gap: 10px;
+  }
+
+  .input-field,
+  .subtask-input input {
+    width: 100%;
+    height: 40px;
+    padding: 10px 21px;
+  }
+
+  .input-group {
+    gap: 8px;
+  }
+
+  .add-task-container {
+    flex-direction: column;
+    margin-top: 120px;
+    gap: 16px;
+  }
+
+  .category-dropdown {
+    position: relative !important;
+  }
+
+  .addTaskPopup .add-task-container-popup .contact-list {
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100%;
+  }
+
+  .selected-contacts {
+    gap: 8px;
+  }
+
+  .add-task-left,
+  .add-task-right {
+    width: 100%;
+    height: auto;
+  }
+
+  .add-task-vertical-line {
+    display: none;
+  }
+
+  .category-dropdown {
+    width: 100% !important;
+  }
+
+  .input-field-editing {
+    width: 100%;
+  }
+
+  .clear-button {
+    display: none !important;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: space-between;
+    height: 74px;
+    left: 0;
+    right: 0;
+    align-items: center;
+    background-color: #f6f7f8;
+    gap: 12px;
+    z-index: 100 !important ;
+    position: sticky;
+    bottom: 0;
+    width: 100% !important;
+    padding: 20px 50px !important;
+  }
+
+  .add-task-content h1 {
+    font-size: 47px;
+    line-height: 56.4px;
+    text-align: left;
+  }
+
+  .add-task-title {
+    padding-top: 48px;
+    padding-bottom: 24px;
+    height: 112px;
+    left: 0;
+    right: 0;
+    background-color: #f6f7f8;
+    z-index: 100;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    padding-left: 50px;
+  }
+
+  .add-task-container-popup {
+    margin: 8px 0 8px 0;
+    padding: 0 50px 0 50px;
+    flex: 1;
+  }
+
+  .add-task-content-pop-up {
+    padding: 0 0 0 0;
+    width: 100%;
+  }
+
+  .input-field,
+  .subtask-input input {
+    width: 100% !important;
+    height: 40px !important;
+    padding: 10px 21px !important;
+  }
+
+  .close-popup {
+    display: none;
+  }
+
+  .add-task-content-pop-up {
+    padding: 0 0 0 0;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 850px) and (max-height: 1050px) {
+  .popup-content {
+    display: block;
+  }
+}
+
+@media (max-width: 672px) {
+  .add-task-content-pop-up {
+    padding: 64px 16px;
+  }
+
+  .add-task-content-pop-up {
+    padding: 0 0 0 0;
+  }
+
+  .add-task-container-popup {
+    margin: 8px 0 8px 0;
+    padding: 0 16px 0 16px;
+  }
+
+  .priority-buttons {
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .add-task-content,
+  .add-task-title,
+  .footer {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .add-task-title {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .footer {
+    padding: 20px 16px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .priority-buttons {
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .priority-button,
+  .priority-button.urgent,
+  .priority-button.medium,
+  .priority-button.low {
+    width: 90px !important;
+    height: 41px !important;
+    padding: 18px 10px !important;
+    font-family: Inter;
+    font-size: 12px !important;
+    font-weight: 400 !important;
+    line-height: 19.2px !important;
+    text-align: left;
+  }
+
+  .priority-buttons {
+    gap: 8px;
+    justify-content: space-between;
+  }
+}

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join - Contacts</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicons/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicons/favicon-64x64.png">
+
+    <link rel="apple-touch-icon" sizes="120x120" href="./assets/favicons/apple-touch-favicon/favicon-120x120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./assets/favicons/apple-touch-favicon/favicon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-favicon/favicon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="./assets/favicons/apple-touch-favicon/favicon-167x167.png">
+
+    <link rel="mask-icon" href="./assets/favicons/favicon-safari.svg" color="#5bbad5">
+ 
+    <link rel="stylesheet" href="./css/fonts.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/contacts.css">
+    <link rel="stylesheet" href="./css/landscapeWarning.css">
+
+</head>
+
+<body onload="initContacts(); initLandscapeWarning();">
+
+    <header id="header"></header>
+
+    <section id="desktopSidebar" class="sidebar"></section>
+
+    <main class="contacts-content">
+
+        <div class="contact-menu" id="contactListResponsive">
+            <div class="add-contact-button" id="add-new-contact" onclick="openNewContact()"> 
+                <span class="add-new-contact-text">Add new contact</span>
+                <img src="./assets/icons/personAdd.svg" alt="add person" class="add-person-icon">
+            </div>
+            <div id="loadContactMenu" class="contact-list"> 
+                <div class="contact-sequence">
+                    <span class="contact-sequence-text" id="sortContact"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="contact-detail-section">
+            <div class="contact-detail">
+                <div class="contact-detail-headline">Contact</div>
+                <div class="contact-detail-separator"></div>
+                <div class="contact-detail-text">Better with a team</div>
+            </div>
+         
+            </div>
+        </div>
+        <div id="contactDetail" class="contact-detail-card"></div>
+
+        <div class="window-add-new-contact" id="newContact" onclick="checkClickOutsideAddNewContact(event)">
+        </div>
+
+        <div id="createContactSuccessfull" class="create-contact-successful-overlay">
+            <div class="create-contact-successfull-container">
+                <span>Contact successfully created</span>
+            </div>
+        </div>
+
+        <div class="window-edit-contact" id="editContact" onclick="checkClickOutsideEditContact(event)">
+        </div>
+
+        <div class="add-new-contact-button-responsive">
+            <div class="add-contact-button-responsive" id="add-new-contact" onclick="openNewContact()"> 
+                <img src="./assets/icons/personAdd.svg" alt="addPerson" class="add-person-icon">
+            </div>
+        </div>
+
+        <div class="edit-contact-menu-button-responsive">
+            <div class="edit-contact-button-responsive" id="editContactMenu"> 
+                <img src="./assets/icons/editContactMenuResponsive.svg" alt="editMenu" class="edit-menu-responsive">
+            </div>
+        </div>
+   
+    <div id="landscapeWarningMobile" class="landscape-warning"></div>
+
+    <div id="deletePopUp" class="delete-pup-up d-none-important"></div>
+
+    </main>
+
+    <nav id="mobileNav" class="nav-mobile"></nav>
+
+    <script src="./js/templates/mainTemplate.js"></script>
+    <script src="./js/firebase.js"></script>
+    <script src="./js/index.js"></script>
+    <script src="./js/contacts.js"></script>
+    <script src="./js/contactsSave.js"></script>
+    <script src="./js/contactsDelete.js"></script>
+    <script src="./js/contactsAnimation.js"></script>
+    <script src="./js/contactConfirmation.js" defer></script>
+    <script src="./js/templates/contactsTemplate.js"></script>
+
+</body>
+
+</html>

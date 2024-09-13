@@ -1,0 +1,53 @@
+.landscape-warning {
+  position: fixed;
+  background-color: var(--clr-main);
+  inset: 0;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 16px;
+}
+
+.landscape-warning-container {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  justify-content: center;
+  width: 100%;
+  height: 300px;
+}
+
+.landscape-warning-imagebox {
+  height: 100%;
+  padding: 16px 0;
+}
+
+.landscape-warning-icon {
+  height: 100%;
+  width: 100%;
+}
+
+.landscape-warning-text {
+  color: white;
+  font-weight: 700;
+  font-size: 47px;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+}
+
+.landscape-warning-seperator {
+  width: 3px;
+  background-color: white;
+  height: 100%;
+}
+
+@media (max-height: 500px) {
+  .landscape-warning-container {
+    height: 250px;
+  }
+  .landscape-warning-text {
+    font-size: 36px;
+  }
+}

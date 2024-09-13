@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join - Board</title>
+    <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicons/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="./assets/favicons/favicon-48x48.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="./assets/favicons/favicon-64x64.png">
+
+    <link rel="apple-touch-icon" sizes="120x120" href="./assets/favicons/apple-touch-favicon/favicon-120x120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./assets/favicons/apple-touch-favicon/favicon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./assets/favicons/apple-touch-favicon/favicon-180x180.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="./assets/favicons/apple-touch-favicon/favicon-167x167.png">
+   
+    <link rel="mask-icon" href="./assets/favicons/favicon-safari.svg" color="#5bbad5">
+  
+    <link rel="stylesheet" href="./css/fonts.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <link rel="stylesheet" href="./css/board.css">
+    <link rel="stylesheet" href="./css/boardAddTask.css">
+    <link rel="stylesheet" href="./css/addTask.css">
+    <link rel="stylesheet" href="./css/taskPopup.css">
+    <link rel="stylesheet" href="./css/taskPopup.css">
+    <link rel="stylesheet" href="./css/landscapeWarning.css">
+
+</head>
+
+<body onload="init(); initBoard(); initLandscapeWarning();">
+
+    <header id="header"></header>
+
+    <section id="desktopSidebar" class="sidebar"></section>
+
+    >
+    <main class="board-content">
+
+      
+        <div class="board-title-container">
+            <div class="board-title-task-mobile">
+                <h1>Board</h1>
+                <button class="board-add-task-button-mobile" onclick="openAddTaskPopup()"></button>
+            </div>
+            <div class="search-field-add-task-container">
+                <div class="board-search-field">
+                    <input id="boardSearchInput" class="board-search-input" type="text" placeholder="Find Task" oninput="searchTasks()">
+                    <span class="board-search-seperator"></span>
+                    <img class="board-search-icon" src="./assets/icons/search.svg" alt="">
+                    <div class="board-no-results d-none">
+                        No tasks match your search!
+                    </div>
+                </div>
+                <button class="board-add-task-button" onclick="openAddTaskPopup()">
+                    Add task
+                    <img src="./assets/icons/addplus.svg" alt="">
+                </button>
+            </div>
+        </div>
+
+      
+        <div class="board-container">
+            <div id="scrollToToDo" class="board-sections board-to-do">
+                <div class="board-section-title">
+                    <h2>To do</h2>
+                    <button class="board-add-button"  onclick="openAddTaskPopup('to do')"></button>
+                </div>
+               
+                <div id="toDo" ondrop="moveTo('toDo')" ondragleave="removeHighlightDragArea('toDo')" ondragover="allowDrop(event); addHighlightDragArea('toDo')" class="board-drag-area-container">
+                    <div class="board-section-placeholder">No tasks To do</div>
+                </div>
+            </div>
+            <div id="scrollToInProgress" class="board-sections board-in-progress">
+                <div class="board-section-title">
+                    <h2>In progress</h2>
+                    <button class="board-add-button"  onclick="openAddTaskPopup('in progress')"></button>
+                </div>
+              
+                <div id="inProgress" ondrop="moveTo('inProgress')"  ondragleave="removeHighlightDragArea('inProgress')" ondragover="allowDrop(event); addHighlightDragArea('inProgress')" class="board-drag-area-container">
+                    <div class="board-section-placeholder">No tasks In progress</div>
+                </div>
+            </div>
+            <div id="scrollToAwaitFeedback" class="board-sections board-await-feedback">
+                <div class="board-section-title">
+                    <h2>Await feedback</h2>
+                    <button class="board-add-button" onclick="openAddTaskPopup('await feedback')"></button> 
+                </div>
+            
+                <div id="awaitFeedback" ondrop="moveTo('awaitFeedback')"  ondragleave="removeHighlightDragArea('awaitFeedback')" ondragover="allowDrop(event); addHighlightDragArea('awaitFeedback')" class="board-drag-area-container">
+                    <div class="board-section-placeholder">No tasks Await feedback</div>
+                </div>
+            </div>
+            <div id="scrollToDone" class="board-sections board-done">
+                <div class="board-section-title">
+                    <h2>Done</h2>
+                </div>
+                
+                <div id="done" ondrop="moveTo('done')"  ondragleave="removeHighlightDragArea('done')" ondragover="allowDrop(event); addHighlightDragArea('done')" class="board-drag-area-container">
+                    <div class="board-section-placeholder">No tasks Done</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="moveToMobileOverlay" class="board-move-to-mobile" onclick="closeMoveToMobileIfClickOutside(event)"></div>
+
+       
+        <div id="addTaskPopup" class="addTaskPopup" style="display: none;">
+            <div class="popup-content">
+                <img src="./assets/icons/close-contact.svg" alt="Close" class="close-popup" id="closePopup"
+                    onclick="closeAddTaskPopup()">
+                <div class="add-task-content-pop-up">
+                    <div class="add-task-title">
+                        <h1> Add Task</h1>
+                    </div>
+                    <div id="recipeForm" class="add-task-container-popup width-pop-up">
+                        <div class="add-task-left">
+                      
+                            <div class="input-group">
+                                <label for="title">Title<span class="red-color">*</span></label>
+                                <input type="text" id="title" class="input-field" required minlength="3" maxlength="50"
+                                    placeholder="Enter a title">
+                            </div>
+
+                            
+                            <div class="input-group">
+                                <label for="description">Description</label>
+                                <textarea id="description" class="text-area" minlength="10" maxlength="400"
+                                    placeholder="Enter a description"></textarea>
+                            </div>
+
+                            <div class="assigned-to">
+                                <div class="search-container">
+                                    <input type="text" id="contact-search" class="contact-search"
+                                        placeholder="Select contacts to assign" oninput="filterContacts()">
+
+                                    <button id="toggle-list" class="toggle-list" onclick="toggleContactList()">
+                                        <img src="./assets/icons/arrow_drop_down.svg" alt="Dropdown Icon"
+                                            id="dropdown-assigned" class="dropdown-icon">
+                                    </button>
+                                </div>
+                                <div id="contact-list" class="contact-list hidden">
+                                </div>
+                                <div id="selected-contacts" class="selected-contacts">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="add-task-vertical-line"></div>
+
+                        <div class="add-task-right">
+                          
+                            <div class="due-date-section">
+                                <div class="input-group">
+                                    <label for="due-date">Due date <span class="required">*</span></label>
+                                    <input type="text" id="due-date" class="input-field" placeholder="dd/mm/yyyy"
+                                        onfocus="(this.type='date'); this.min = new Date().toISOString().split('T')[0]"
+                                        onblur="(this.type='text')" required>
+                                </div>
+                            </div>
+
+                            <div class="priority-section">
+                                <div class="input-group">
+                                    <p>Prio</p>
+                                    <div class="priority-buttons">
+                                        <button id="urgent-button" class="priority-button"
+                                            onclick="setPriority('urgent')">
+                                            Urgent <img src="./assets/icons/urgent.svg" alt="Urgent">
+                                        </button>
+                                        <button id="medium-button" class="priority-button "
+                                            onclick="setPriority('medium')">
+                                            Medium <img src="./assets/icons/medium.svg" alt="Medium">
+                                        </button>
+                                        <button id="low-button" class="priority-button" onclick="setPriority('low')">
+                                            Low <img src="./assets/icons/low.svg" alt="Low">
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <form class="category-section">
+                                <div class="input-group" id="category-groupe">
+                                    <label for="category">Category <span class="required">*</span></label>
+                                    <div class="category-field" id="category-field" onclick="toggleCategoryDropdown()">
+                                        <button id="toggle-list" class="toggle-list">
+                                            <img src="./assets/icons/arrow_drop_down.svg" alt="Dropdown Icon"
+                                                id="dropdown-assigned" class="dropdown-icon dropdown-icon-category">
+                                        </button>
+                                        <input type="text" id="category" class="category"
+                                            placeholder="Select task category" required readonly>
+                                    </div>
+                                    <div id="category-dropdown" class="category-dropdown">
+                                        <div onclick="selectCategory('Technical Task')">Technical Task</div>
+                                        <div onclick="selectCategory('User Story')">User Story</div>
+                                    </div>
+                                </div>
+                            </form>
+
+                            <form class="subtasks-section">
+                                <div class="input-group">
+                                    <p>Subtasks</p>
+                                    <div class="subtask-input input-group">
+                                        <input type="text" id="subtask-input" class="input-field"
+                                            placeholder="Add new subtask" minlength="5" maxlength="30">
+                                        <div class="edit-delete right-position" style="display: none ;">
+                                            <img src="./assets/icons/reset.svg" alt="Reset" class="reset-icon"
+                                                onclick="resetSubtaskInput()">
+                                            <div class="vertical-line"></div>
+                                            <img src="./assets/icons/done.svg" alt="Add" class="add-icon"
+                                                onclick="addSubtask()">
+                                        </div>
+                                        <div class="add-subtask" style="display: flex;">
+                                            <img src="./assets/icons/add.svg" alt="Add" class="add-icon">
+                                        </div>
+                                    </div>
+
+                                    <ul id="subtask-list" class="subtask-list" style="list-style-type:disc"></ul>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="taskCreatedPopup" class="taskCreatedPopup">
+                            <p>
+                                Task added to board
+                                <img src="./assets/icons/boardDesktop.svg" alt="Board Icon" />
+                            </p>
+                        </div>
+                        
+                    </div>
+                    <div class="footer">
+                        <p class="required-note"><span>*</span>This field is required</p>
+                        <div class="buttons">
+                            <button onclick="closeAddTaskPopup()" class="clear-button">
+                                <p>Cancel</p>
+                                <div class="add-task-clear-icon"></div>
+                            </button>
+        
+                            <button onclick="createTaskFunction()" class="create-button" type="submit">
+                                <p>Create task</p>
+                                <img src="./assets/icons/check.svg" alt="Check">
+                            </button>
+        
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                    <div id="taskDetailsPopup" class="task-popup"></div>
+                
+            <div id="landscapeWarningMobile" class="landscape-warning"></div>
+
+            <div id="deletePopUp" class="delete-pup-up d-none-important"></div>
+
+    </main>
+
+    <nav id="mobileNav" class="nav-mobile"></nav>
+
+    <script src="./js/templates/mainTemplate.js"></script>
+    <script src="./js/index.js"></script>
+    <script src="./js/templates/boardTemplate.js"></script>
+    <script src="./js/firebase.js"></script>
+    <script src="./js/board.js"></script>
+    <script src="./js/boardAnimation.js"></script>
+    <script src="./js/addTask.js"></script>
+    <script src="./js/addTaskSaveAndEdit.js"></script>
+    <script src="./js/addTaskToggle.js"></script>
+    <script src="./js/templates/addTaskTemplate.js"></script>
+    <script src="./js/boardAddTask.js"></script>
+    <script src="./js/taskPopup.js"></script>
+    <script src="./js/editTaskPopup.js"></script>
+    <script src="./js/editTaskContacts.js"></script>
+    <script src="./js/editTaskPopupSubtasks.js"></script>
+    <script src="./js/templates/taskPopupTemplate.js"></script>
+
+</body>
+
+</html>
+
+</html>
