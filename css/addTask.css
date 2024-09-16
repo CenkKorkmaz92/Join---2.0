@@ -12,7 +12,7 @@
 .add-task-container {
     display: flex;
     justify-content: flex-start;
-    margin: 56px 0;
+    margin-top: 56px;
     gap: 32px;
 }
 
@@ -724,6 +724,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding-left: 10px;
     max-height: 100px;
     overflow-y: auto;
+    max-height: 96px;
 }
 
 .input-field-editing {
