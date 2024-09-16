@@ -1,27 +1,12 @@
-/**
- * Konfiguriert die Felder, die validiert werden sollen.
- * Enthält die ID und das zugehörige DOM-Element für jedes Feld.
- *
- * @typedef {Object} Field
- * @property {string} id - Die ID des Feldes.
- * @property {HTMLElement} element - Das DOM-Element des Feldes.
- * @property {HTMLElement} [fieldElement] - Optionales zusätzliches DOM-Element für das Feld.
- */
-
-/**
- * Array von Feldern, die validiert werden sollen.
- *
- * @type {Field[]}
- */
 const fields = [
     { id: 'title', element: document.getElementById('title') },
     { id: 'category', element: document.getElementById('category'), fieldElement: document.getElementById('category-field') },
     { id: 'due-date', element: document.getElementById('due-date') }
 ];
 
+
 /**
- * Schaltet die Sichtbarkeit der Kontaktliste um.
- * Zeigt oder versteckt die Kontaktliste und passt die UI entsprechend an.
+ * Toggles the visibility of the contact list.
  */
 function toggleContactList() {
     const contactList = document.getElementById("contact-list");
@@ -37,12 +22,12 @@ function toggleContactList() {
     }
 }
 
+
 /**
- * Verbirgt die Kontaktliste und passt die UI entsprechend an.
- *
- * @param {HTMLElement} contactSearch - Das Suchfeld für Kontakte.
- * @param {HTMLElement} dropdownIcon - Das Dropdown-Icon-Element.
- * @param {HTMLElement} selectedContacts - Das Element, das die ausgewählten Kontakte anzeigt.
+ * Hides the contact list and updates related elements.
+ * @param {HTMLElement} contactSearch - The contact search input element.
+ * @param {HTMLElement} dropdownIcon - The dropdown icon element.
+ * @param {HTMLElement} selectedContacts - The selected contacts container element.
  */
 function hideContactList(contactSearch, dropdownIcon, selectedContacts) {
     contactSearch.style.borderRadius = "10px";
@@ -52,12 +37,12 @@ function hideContactList(contactSearch, dropdownIcon, selectedContacts) {
     contactSearch.value = '';
 }
 
+
 /**
- * Zeigt die Kontaktliste und passt die UI entsprechend an.
- *
- * @param {HTMLElement} contactSearch - Das Suchfeld für Kontakte.
- * @param {HTMLElement} dropdownIcon - Das Dropdown-Icon-Element.
- * @param {HTMLElement} selectedContacts - Das Element, das die ausgewählten Kontakte anzeigt.
+ * Shows the contact list and updates related elements.
+ * @param {HTMLElement} contactSearch - The contact search input element.
+ * @param {HTMLElement} dropdownIcon - The dropdown icon element.
+ * @param {HTMLElement} selectedContacts - The selected contacts container element.
  */
 function showContactList(contactSearch, dropdownIcon, selectedContacts) {
     contactSearch.style.borderRadius = "10px 10px 0 0";
@@ -66,9 +51,9 @@ function showContactList(contactSearch, dropdownIcon, selectedContacts) {
     document.addEventListener('click', closeContactListOnClickOutside);
 }
 
+
 /**
- * Filtert die angezeigten Kontakte basierend auf dem Suchbegriff.
- * Blendet Kontakte aus, die den Suchbegriff nicht enthalten.
+ * Filters the contact list based on the search term entered in the contact search field.
  */
 function filterContacts() {
     const searchTerm = document.getElementById("contact-search").value.toLowerCase();
@@ -84,10 +69,11 @@ function filterContacts() {
     }
 }
 
+
 /**
- * Schließt die Kontaktliste, wenn ein Klick außerhalb der Liste erfolgt.
+ * Closes the contact list when the user clicks outside of it.
  *
- * @param {Event} event - Das Click-Event.
+ * @param {Event} event - The click event.
  */
 function closeContactListOnClickOutside(event) {
     const contactList = document.getElementById("contact-list");
@@ -103,9 +89,10 @@ function closeContactListOnClickOutside(event) {
     }
 }
 
+
 /**
- * Initialisiert die Kontaktliste beim Laden des Dokuments.
- * Lädt Kontakte aus der Datenquelle und fügt Event-Listener hinzu.
+ * Initializes the contact list on page load.
+ * Fetches contacts from Firebase, creates contact items, and sets up event listeners.
  */
 document.addEventListener("DOMContentLoaded", async () => {
     const contactList = document.getElementById("contact-list");
@@ -123,21 +110,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     setPriority('medium');
 });
 
+
 /**
- * Erstellt ein Kontakt-Item und fügt es der Kontaktliste hinzu.
- *
- * @param {Object} contact - Das Kontaktobjekt mit den Kontaktdaten.
- * @param {string|number} contact.id - Die eindeutige Kennung des Kontakts.
- * @param {string} contact.name - Der Name des Kontakts.
- * @param {string} contact.email - Die E-Mail-Adresse des Kontakts.
- * @param {string} contact.color - Die Hintergrundfarbe für das Profilbild des Kontakts.
- * @param {HTMLElement} contactList - Das DOM-Element der Kontaktliste.
+ * Creates a contact item element and appends it to the contact list.
+ * @param {Object} contact - The contact data.
+ * @param {HTMLElement} contactList - The contact list element.
  */
 function createContactItem(contact, contactList) {
     const contactItem = document.createElement("div");
     contactItem.classList.add("contact-item");
     const nameParts = contact.name.split(" ");
-    const initials = nameParts[0].charAt(0) + (nameParts[1] ? nameParts[1].charAt(0) : '');
+    const initials = nameParts[0].charAt(0) + nameParts[1].charAt(0);
     contactItem.innerHTML = `
       <div class="contact-logo" style="background-color: ${contact.color};" data-background="${contact.color}">
           ${initials} 
@@ -148,11 +131,11 @@ function createContactItem(contact, contactList) {
     contactList.appendChild(contactItem);
 }
 
+
 /**
- * Handhabt Klick-Ereignisse auf die Kontaktliste.
- * Schaltet das Auswahlkästchen und die CSS-Klasse 'checked' um.
- *
- * @param {Event} event - Das Click-Event.
+ * Adds a click event listener to the contact list.
+ * When a contact item is clicked, it toggles the 'checked' class on the checkbox and the contact item itself,
+ * and then updates the display of selected contacts.
  */
 document.getElementById("contact-list").addEventListener("click", (event) => {
     const contactItem = event.target.closest(".contact-item");
@@ -164,9 +147,9 @@ document.getElementById("contact-list").addEventListener("click", (event) => {
     }
 });
 
+
 /**
- * Aktualisiert die Anzeige der ausgewählten Kontakte.
- * Fügt ausgewählte Kontakte zur Anzeige hinzu und entfernt nicht ausgewählte.
+ * Updates the display of selected contacts.
  */
 function updateSelectedContacts() {
     const selectedContacts = document.getElementById("selected-contacts");
@@ -183,18 +166,15 @@ function updateSelectedContacts() {
     });
 }
 
-/**
- * Fügt einen zusätzlichen Event-Listener für das Suchfeld hinzu,
- * um die Kontaktliste bei Eingabe zu filtern.
- */
+
 document.getElementById('contact-search').addEventListener('input', function () {
     document.getElementById('contact-list').style.display = 'block';
     filterContacts();
 });
 
+
 /**
- * Löscht alle Eingabefelder, setzt die Rahmen zurück, entfernt Fehlermeldungen,
- * setzt Auswahlkästchen zurück und löscht ausgewählte Kontakte und Unteraufgaben.
+ * Clears all input fields, resets styles, and clears error messages.
  */
 function clearFields() {
     clearInputFields();
@@ -206,24 +186,27 @@ function clearFields() {
     resetPriority();
 }
 
+
 /**
- * Löscht die Werte aller definierten Eingabefelder.
+ * Clears the values of all specified input fields.
  */
 function clearInputFields() {
     const inputIds = ["title", "description", "contact-search", "due-date", "category", "subtask-input"];
     inputIds.forEach(id => document.getElementById(id).value = "");
 }
 
+
 /**
- * Setzt die Rahmen aller definierten Eingabefelder zurück.
+ * Resets the borders of all specified input fields to their default style.
  */
 function resetInputBorders() {
     const inputIds = ["title", "description", "due-date", "category-field", "contact-search", "subtask-input"];
     inputIds.forEach(id => document.getElementById(id).style.border = '1px solid rgba(209, 209, 209, 1)');
 }
 
+
 /**
- * Entfernt alle Fehlermeldungen aus den definierten Feldern.
+ * Removes all error messages from the form.
  */
 function removeErrorMessages() {
     const errorIds = ["title", "due-date"];
@@ -232,8 +215,9 @@ function removeErrorMessages() {
     removeErrorMessageCategory();
 }
 
+
 /**
- * Setzt alle Auswahlkästchen für Kontakte zurück.
+ * Resets all contact checkboxes in the contact list to their unchecked state.
  */
 function resetContactCheckboxes() {
     document.querySelectorAll(".contact-checkbox").forEach(checkbox => {
@@ -242,32 +226,36 @@ function resetContactCheckboxes() {
     });
 }
 
+
 /**
- * Löscht die Anzeige der ausgewählten Kontakte.
+ * Clears the display of selected contacts.
  */
 function clearSelectedContacts() {
     document.getElementById("selected-contacts").innerHTML = "";
 }
 
+
 /**
- * Löscht die Liste der Unteraufgaben.
+ * Clears the subtask list.
  */
 function clearSubtaskList() {
     document.getElementById("subtask-list").innerHTML = "";
 }
 
+
 /**
- * Setzt die Priorität auf 'medium' zurück und aktualisiert die aktuelle Priorität.
+ * Resets the priority buttons to the default 'medium' priority.
  */
 function resetPriority() {
     setPriority('medium');
     currentPriority = "medium";
 }
 
+
 /**
- * Entfernt die Fehlermeldung für ein bestimmtes Feld.
+ * Removes the error message associated with a specific field.
  *
- * @param {HTMLElement} field - Das DOM-Element des Feldes.
+ * @param {HTMLElement} field - The input field for which to remove the error message.
  */
 function removeErrorMessage(field) {
     let errorElement = field.nextElementSibling;
@@ -276,11 +264,12 @@ function removeErrorMessage(field) {
     }
 }
 
+
 /**
- * Validiert das Fälligkeitsdatum eines Tasks.
+ * Validates the due date to ensure it's in the correct format (YYYY-MM-DD) and a future date.
  *
- * @param {string} dueDate - Das Fälligkeitsdatum im Format YYYY-MM-DD.
- * @returns {string} Eine Fehlermeldung, falls das Datum ungültig ist, ansonsten ein leerer String.
+ * @param {string} dueDate - The due date string to validate.
+ * @returns {string} An error message if the date is invalid, otherwise an empty string.
  */
 function validateDueDate(dueDate) {
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
@@ -295,19 +284,21 @@ function validateDueDate(dueDate) {
     return '';
 }
 
+
 /**
- * Validiert alle erforderlichen Felder im Formular.
+ * Validates all input fields in the form except for the category field.
  *
- * @returns {boolean} True, wenn alle Felder gültig sind, sonst false.
+ * @returns {boolean} True if all fields are valid, otherwise false.
  */
 function validateFields() {
     return validateTitleDueDate() && validateCategory();
 }
 
+
 /**
- * Validiert die Titel- und Fälligkeitsfelder.
+ * Validates the title and due date input fields in the form.
  *
- * @returns {boolean} True, wenn die Titel- und Fälligkeitsfelder gültig sind, sonst false.
+ * @returns {boolean} True if both fields are valid, otherwise false.
  */
 function validateTitleDueDate() {
     let isValid = true;
@@ -332,10 +323,11 @@ function validateTitleDueDate() {
     return isValid;
 }
 
+
 /**
- * Validiert das Kategorie-Feld.
+ * Validates the category input field in the form.
  *
- * @returns {boolean} True, wenn das Kategorie-Feld gültig ist, sonst false.
+ * @returns {boolean} True if the field is valid, otherwise false.
  */
 function validateCategory() {
     const categoryField = fields.find(field => field.id === 'category');
@@ -352,30 +344,24 @@ function validateCategory() {
     return isValid;
 }
 
-/**
- * Verhindert das Weiterleiten von Klick-Ereignissen an übergeordnete Elemente.
- *
- * @param {Event} event - Das Click-Event.
- */
-function preventClickPropagation(event) {
-    event.stopPropagation();
-}
 
 /**
- * Handhabt das Absenden des Formulars zum Erstellen eines neuen Tasks.
- *
- * @param {Event} event - Das Submit-Event.
- */
+* Handles the form submission event.
+* Prevents the default form submission behavior and calls the `createTask` function.
+*
+* @param {Event} event - The form submission event.
+*/
 document.getElementById('recipeForm').onsubmit = function (event) {
     event.preventDefault();
     createTask();
 };
 
+
 /**
- * Zeigt eine Fehlermeldung für ein bestimmtes Feld an.
- *
- * @param {HTMLElement} field - Das DOM-Element des Feldes.
- * @param {string} message - Die Fehlermeldung, die angezeigt werden soll.
+ * Shows an error message for a specific field.
+ * 
+ * @param {HTMLElement} field - The input field for which to show the error message.
+ * @param {string} message - The error message to display.
  */
 function showErrorMessage(field, message) {
     let errorElement = field.nextElementSibling;
@@ -387,11 +373,12 @@ function showErrorMessage(field, message) {
     errorElement.textContent = message;
 }
 
+
 /**
- * Entfernt eine Fehlermeldung von einem bestimmten Feld.
- *
- * @param {HTMLElement} field - Das DOM-Element des Feldes.
- */
+* Removes the error message associated with a specific field.
+*
+* @param {HTMLElement} field - The input field for which to remove the error message.
+*/
 function removeErrorMessage(field) {
     let errorElement = field.nextElementSibling;
     if (errorElement && errorElement.classList.contains('error-message')) {
@@ -399,14 +386,14 @@ function removeErrorMessage(field) {
     }
 }
 
+
 /**
- * Führt eine POST-Anfrage aus, um Daten an einen bestimmten Pfad zu senden.
- *
- * @async
- * @param {string} path - Der Pfad, an den die Daten gesendet werden sollen.
- * @param {Object} data - Die Daten, die gesendet werden sollen.
- * @returns {Promise<Object>} Das JSON-Antwortobjekt.
- */
+* Sends a POST request to the Firebase database to save data.
+*
+* @param {string} path - The path in the Firebase database where the data should be saved.
+* @param {object} data - The data to be saved.
+* @returns {Promise<object>} A promise that resolves with the response from the Firebase database.
+*/
 async function postData(path = "", data = {}) {
     let response = await fetch(BASE_URL + path + ".json", {
         method: "POST",

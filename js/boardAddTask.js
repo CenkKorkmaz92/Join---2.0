@@ -1,14 +1,12 @@
-/**
- * Funktion zum Erstellen einer Aufgabe. Kann basierend auf dem Task-Status geändert werden.
- *
- * @type {Function}
- */
 let createTaskFunction = createTask;
 
+
 /**
- * Öffnet das Popup zum Hinzufügen einer neuen Aufgabe und setzt die entsprechende Erstellungsmethode basierend auf dem Task-Status.
+ * Sets the global `createTaskFunction` variable based on the provided task status.
+ * This function is used to determine which task creation function should be called 
+ * when the "Create task" button is clicked in the popup.
  *
- * @param {string} taskStatus - Der Status der Aufgabe ('to do', 'in progress', 'await feedback').
+ * @param {string} taskStatus - The status of the task (e.g., 'in progress', 'await feedback', or any other valid status).
  */
 function openAddTaskPopup(taskStatus) {
     let popup = document.getElementById('addTaskPopup');
@@ -29,8 +27,11 @@ function openAddTaskPopup(taskStatus) {
     }
 }
 
+
 /**
- * Schließt das Popup zum Hinzufügen einer neuen Aufgabe.
+ * Closes the "Add Task" popup with a smooth animation.
+ * It first adds the 'hidden' class to trigger the animation, then sets a timeout to 
+ * hide the popup completely after the animation duration.
  */
 function closeAddTaskPopup() {
     let popup = document.getElementById('addTaskPopup');
@@ -41,11 +42,8 @@ function closeAddTaskPopup() {
     }, 400);
 }
 
-/**
- * Schließt das Add-Task-Popup, wenn ein Klick außerhalb des Popups erfolgt.
- *
- * @param {Event} event - Das Click-Event.
- */
+
+// Event listener for clicking outside the popup to close the popup
 window.addEventListener('click', (event) => {
     const popup = document.getElementById('addTaskPopup');
     if (event.target === popup) {
@@ -53,9 +51,11 @@ window.addEventListener('click', (event) => {
     }
 });
 
+
 /**
- * Erstellt eine neue Aufgabe mit dem Status "Await Feedback" nach der Validierung der Eingabefelder.
- * Sendet die Aufgabe an Firebase, leert die Eingabefelder, zeigt ein Popup an und leitet zur Board-Seite weiter.
+ * Creates a new task object with the status "Await feedback" and saves it to Firebase.
+ * This function is called when the "Create task" button is clicked in the popup 
+ * and the `taskStatus` is set to 'await feedback'.
  */
 async function createTaskAwaitFeedback() {
     if (!validateFields()) return;
@@ -71,16 +71,18 @@ async function createTaskAwaitFeedback() {
     }
 }
 
+
 /**
- * Erstellt eine neue Aufgabe mit dem Status "In Progress" nach der Validierung der Eingabefelder.
- * Sendet die Aufgabe an Firebase, leert die Eingabefelder, zeigt ein Popup an und leitet zur Board-Seite weiter.
+ * Creates a new task object with the status "In progress" and saves it to Firebase.
+ * This function is called when the "Create task" button is clicked in the popup 
+ * and the `taskStatus` is set to 'in progress'.
  */
 async function createTaskInProgress() {
     if (!validateFields()) return;
     const newTask = await buildNewTaskObject('in progress');
     try {
         const response = await postData("tasks", newTask);
-        newTask.firebaseId = response.name;
+        newTask.firebeId = response.name;
         clearFields();
         showTaskCreatedPopup();
         setTimeout(() => { window.location.href = 'board.html'; }, 2000);
@@ -89,12 +91,12 @@ async function createTaskInProgress() {
     }
 }
 
+
 /**
- * Baut ein neues Aufgabenobjekt basierend auf den eingegebenen Daten und dem angegebenen Status.
- *
- * @async
- * @param {string} status - Der Status der neuen Aufgabe ('to do', 'in progress', 'await feedback', etc.).
- * @returns {Promise<Object>} Das neu erstellte Aufgabenobjekt.
+ * Builds a new task object with data from the form.
+ * Assigns unique IDs to assigned contacts.
+ * @param {string} status - The status of the new task.
+ * @returns {Promise<object>} A promise that resolves with the new task object.
  */
 async function buildNewTaskObject(status) {
     const assignedContacts = await getAssignedContacts();
@@ -104,15 +106,6 @@ async function buildNewTaskObject(status) {
         assignedContactsWithIds[generatedId] = contact;
     });
     return {
-        timestamp: Date.now(),
-        id: Date.now(),
-        Title: document.getElementById('title').value.trim(),
-        Description: document.getElementById('description').value.trim(),
-        Assigned_to: assignedContactsWithIds,
-        Due_date: document.getElementById('due-date').value,
-        Prio: currentPriority,
-        Category: document.getElementById('category').value.trim(),
-        Subtasks: getSubtasks(),
-        Status: status
+        timestamp: Date.now(), id: Date.now(), Title: document.getElementById('title').value.trim(), Description: document.getElementById('description').value.trim(), Assigned_to: assignedContactsWithIds, Due_date: document.getElementById('due-date').value, Prio: currentPriority, Category: document.getElementById('category').value.trim(), Subtasks: getSubtasks(), Status: status
     };
 }

@@ -1,431 +1,10 @@
 /**
- * Konfiguriert die Felder, die validiert werden sollen.
- * Enthält die ID und das zugehörige DOM-Element für jedes Feld.
- *
- * @typedef {Object} Field
- * @property {string} id - Die ID des Feldes.
- * @property {HTMLElement} element - Das DOM-Element des Feldes.
- * @property {HTMLElement} [fieldElement] - Optionales zusätzliches DOM-Element für das Feld.
- */
-
-/**
- * Array von Feldern, die validiert werden sollen.
- *
- * @type {Field[]}
- */
-const fields = [
-    { id: 'title', element: document.getElementById('title') },
-    { id: 'category', element: document.getElementById('category'), fieldElement: document.getElementById('category-field') },
-    { id: 'due-date', element: document.getElementById('due-date') }
-];
-
-/**
- * Schaltet die Sichtbarkeit der Kontaktliste um.
- * Zeigt oder versteckt die Kontaktliste und passt die UI entsprechend an.
- */
-function toggleContactList() {
-    const contactList = document.getElementById("contact-list");
-    const contactSearch = document.getElementById("contact-search");
-    const selectedContacts = document.getElementById("selected-contacts");
-    const toggleButton = document.getElementById("toggle-list");
-    const dropdownIcon = toggleButton.querySelector(".dropdown-icon");
-    contactList.classList.toggle("hidden");
-    if (contactList.classList.contains("hidden")) {
-        hideContactList(contactSearch, dropdownIcon, selectedContacts);
-    } else {
-        showContactList(contactSearch, dropdownIcon, selectedContacts);
-    }
-}
-
-/**
- * Verbirgt die Kontaktliste und passt die UI entsprechend an.
- *
- * @param {HTMLElement} contactSearch - Das Suchfeld für Kontakte.
- * @param {HTMLElement} dropdownIcon - Das Dropdown-Icon-Element.
- * @param {HTMLElement} selectedContacts - Das Element, das die ausgewählten Kontakte anzeigt.
- */
-function hideContactList(contactSearch, dropdownIcon, selectedContacts) {
-    contactSearch.style.borderRadius = "10px";
-    dropdownIcon.src = "./assets/icons/arrow_drop_down.svg";
-    selectedContacts.style.display = "flex";
-    document.removeEventListener('click', closeContactListOnClickOutside);
-    contactSearch.value = '';
-}
-
-/**
- * Zeigt die Kontaktliste und passt die UI entsprechend an.
- *
- * @param {HTMLElement} contactSearch - Das Suchfeld für Kontakte.
- * @param {HTMLElement} dropdownIcon - Das Dropdown-Icon-Element.
- * @param {HTMLElement} selectedContacts - Das Element, das die ausgewählten Kontakte anzeigt.
- */
-function showContactList(contactSearch, dropdownIcon, selectedContacts) {
-    contactSearch.style.borderRadius = "10px 10px 0 0";
-    dropdownIcon.src = "./assets/icons/arrow_drop_up.svg";
-    selectedContacts.style.display = "none";
-    document.addEventListener('click', closeContactListOnClickOutside);
-}
-
-/**
- * Filtert die angezeigten Kontakte basierend auf dem Suchbegriff.
- * Blendet Kontakte aus, die den Suchbegriff nicht enthalten.
- */
-function filterContacts() {
-    const searchTerm = document.getElementById("contact-search").value.toLowerCase();
-    const contactItems = document.querySelectorAll("#contact-list .contact-item");
-    contactItems.forEach(item => {
-        const name = item.textContent.toLowerCase();
-        item.style.display = name.includes(searchTerm) ? "" : "none";
-    });
-    const contactList = document.getElementById("contact-list");
-    const isListOpen = !contactList.classList.contains("hidden");
-    if (!isListOpen) {
-        toggleContactList();
-    }
-}
-
-/**
- * Schließt die Kontaktliste, wenn ein Klick außerhalb der Liste erfolgt.
- *
- * @param {Event} event - Das Click-Event.
- */
-function closeContactListOnClickOutside(event) {
-    const contactList = document.getElementById("contact-list");
-    const contactSearch = document.getElementById("contact-search");
-    const toggleButton = document.getElementById("toggle-list");
-    const selectedContacts = document.getElementById("selected-contacts");
-    if (!contactList.contains(event.target) &&
-        !contactSearch.contains(event.target) &&
-        !toggleButton.contains(event.target)) {
-        toggleContactList();
-        selectedContacts.style.display = "flex";
-        contactSearch.value = '';
-    }
-}
-
-/**
- * Initialisiert die Kontaktliste beim Laden des Dokuments.
- * Lädt Kontakte aus der Datenquelle und fügt Event-Listener hinzu.
- */
-document.addEventListener("DOMContentLoaded", async () => {
-    const contactList = document.getElementById("contact-list");
-    const contactSearch = document.getElementById("contact-search");
-    try {
-        const contactsData = await getData("contacts");
-        if (contactsData) {
-            const firebaseContacts = Object.values(contactsData);
-            firebaseContacts.forEach(contact => createContactItem(contact, contactList));
-        }
-    } catch (error) {
-        console.error("Error fetching contacts:", error);
-    }
-    contactSearch.addEventListener("input", filterContacts);
-    setPriority('medium');
-});
-
-/**
- * Erstellt ein Kontakt-Item und fügt es der Kontaktliste hinzu.
- *
- * @param {Object} contact - Das Kontaktobjekt mit den Kontaktdaten.
- * @param {string|number} contact.id - Die eindeutige Kennung des Kontakts.
- * @param {string} contact.name - Der Name des Kontakts.
- * @param {string} contact.email - Die E-Mail-Adresse des Kontakts.
- * @param {string} contact.color - Die Hintergrundfarbe für das Profilbild des Kontakts.
- * @param {HTMLElement} contactList - Das DOM-Element der Kontaktliste.
- */
-function createContactItem(contact, contactList) {
-    const contactItem = document.createElement("div");
-    contactItem.classList.add("contact-item");
-    const nameParts = contact.name.split(" ");
-    const initials = nameParts[0].charAt(0) + (nameParts[1] ? nameParts[1].charAt(0) : '');
-    contactItem.innerHTML = `
-      <div class="contact-logo" style="background-color: ${contact.color};" data-background="${contact.color}">
-          ${initials} 
-      </div>
-      <span>${contact.name}</span>
-      <div class="contact-checkbox" data-email="${contact.email}"></div>
-    `;
-    contactList.appendChild(contactItem);
-}
-
-/**
- * Handhabt Klick-Ereignisse auf die Kontaktliste.
- * Schaltet das Auswahlkästchen und die CSS-Klasse 'checked' um.
- *
- * @param {Event} event - Das Click-Event.
- */
-document.getElementById("contact-list").addEventListener("click", (event) => {
-    const contactItem = event.target.closest(".contact-item");
-    if (contactItem) {
-        const checkbox = contactItem.querySelector(".contact-checkbox");
-        checkbox.classList.toggle("checked");
-        contactItem.classList.toggle("checked");
-        updateSelectedContacts();
-    }
-});
-
-/**
- * Aktualisiert die Anzeige der ausgewählten Kontakte.
- * Fügt ausgewählte Kontakte zur Anzeige hinzu und entfernt nicht ausgewählte.
- */
-function updateSelectedContacts() {
-    const selectedContacts = document.getElementById("selected-contacts");
-    selectedContacts.innerHTML = '';
-    const selectedCheckboxes = document.querySelectorAll("#contact-list .contact-checkbox.checked");
-    selectedCheckboxes.forEach(checkbox => {
-        const contactItem = checkbox.parentElement;
-        const logo = contactItem.querySelector(".contact-logo");
-        selectedContacts.innerHTML += `
-            <div class="selected-contact" style="background-color: ${logo.dataset.background}">
-                ${logo.innerText}
-            </div>
-        `;
-    });
-}
-
-/**
- * Fügt einen zusätzlichen Event-Listener für das Suchfeld hinzu,
- * um die Kontaktliste bei Eingabe zu filtern.
- */
-document.getElementById('contact-search').addEventListener('input', function () {
-    document.getElementById('contact-list').style.display = 'block';
-    filterContacts();
-});
-
-/**
- * Löscht alle Eingabefelder, setzt die Rahmen zurück, entfernt Fehlermeldungen,
- * setzt Auswahlkästchen zurück und löscht ausgewählte Kontakte und Unteraufgaben.
- */
-function clearFields() {
-    clearInputFields();
-    resetInputBorders();
-    removeErrorMessages();
-    resetContactCheckboxes();
-    clearSelectedContacts();
-    clearSubtaskList();
-    resetPriority();
-}
-
-/**
- * Löscht die Werte aller definierten Eingabefelder.
- */
-function clearInputFields() {
-    const inputIds = ["title", "description", "contact-search", "due-date", "category", "subtask-input"];
-    inputIds.forEach(id => document.getElementById(id).value = "");
-}
-
-/**
- * Setzt die Rahmen aller definierten Eingabefelder zurück.
- */
-function resetInputBorders() {
-    const inputIds = ["title", "description", "due-date", "category-field", "contact-search", "subtask-input"];
-    inputIds.forEach(id => document.getElementById(id).style.border = '1px solid rgba(209, 209, 209, 1)');
-}
-
-/**
- * Entfernt alle Fehlermeldungen aus den definierten Feldern.
- */
-function removeErrorMessages() {
-    const errorIds = ["title", "due-date"];
-    errorIds.forEach(id => removeErrorMessage(document.getElementById(id)));
-    document.querySelectorAll('.error-message').forEach(errorElement => errorElement.textContent = '');
-    removeErrorMessageCategory();
-}
-
-/**
- * Setzt alle Auswahlkästchen für Kontakte zurück.
- */
-function resetContactCheckboxes() {
-    document.querySelectorAll(".contact-checkbox").forEach(checkbox => {
-        checkbox.classList.remove("checked");
-        checkbox.parentElement.classList.remove("checked");
-    });
-}
-
-/**
- * Löscht die Anzeige der ausgewählten Kontakte.
- */
-function clearSelectedContacts() {
-    document.getElementById("selected-contacts").innerHTML = "";
-}
-
-/**
- * Löscht die Liste der Unteraufgaben.
- */
-function clearSubtaskList() {
-    document.getElementById("subtask-list").innerHTML = "";
-}
-
-/**
- * Setzt die Priorität auf 'medium' zurück und aktualisiert die aktuelle Priorität.
- */
-function resetPriority() {
-    setPriority('medium');
-    currentPriority = "medium";
-}
-
-/**
- * Entfernt die Fehlermeldung für ein bestimmtes Feld.
- *
- * @param {HTMLElement} field - Das DOM-Element des Feldes.
- */
-function removeErrorMessage(field) {
-    let errorElement = field.nextElementSibling;
-    if (errorElement && errorElement.classList.contains('error-message')) {
-        errorElement.remove();
-    }
-}
-
-/**
- * Validiert das Fälligkeitsdatum eines Tasks.
- *
- * @param {string} dueDate - Das Fälligkeitsdatum im Format YYYY-MM-DD.
- * @returns {string} Eine Fehlermeldung, falls das Datum ungültig ist, ansonsten ein leerer String.
- */
-function validateDueDate(dueDate) {
-    const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-    if (!datePattern.test(dueDate)) {
-        return 'Please enter a valid date in YYYY-MM-DD format.';
-    }
-    const today = new Date();
-    const selectedDate = new Date(dueDate);
-    if (selectedDate <= today) {
-        return 'Please enter a future date.';
-    }
-    return '';
-}
-
-/**
- * Validiert alle erforderlichen Felder im Formular.
- *
- * @returns {boolean} True, wenn alle Felder gültig sind, sonst false.
- */
-function validateFields() {
-    return validateTitleDueDate() && validateCategory();
-}
-
-/**
- * Validiert die Titel- und Fälligkeitsfelder.
- *
- * @returns {boolean} True, wenn die Titel- und Fälligkeitsfelder gültig sind, sonst false.
- */
-function validateTitleDueDate() {
-    let isValid = true;
-    const fieldsToValidate = fields.filter(field => field.id !== 'category');
-    fieldsToValidate.forEach(field => {
-        if (field.element.value.trim() === "") {
-            (field.fieldElement || field.element).style.border = '1px solid rgba(255, 129, 144, 1)';
-            showErrorMessage(field.element, 'This field is required');
-            isValid = false;
-        } else if (field.id === 'due-date') {
-            const errorMessage = validateDueDate(field.element.value);
-            if (errorMessage) {
-                field.element.style.border = '1px solid rgba(255, 129, 144, 1)';
-                showErrorMessage(field.element, errorMessage);
-                isValid = false;
-            }
-        } else {
-            (field.fieldElement || field.element).style.border = '1px solid rgba(41, 171, 226, 1)';
-            removeErrorMessage(field.element);
-        }
-    });
-    return isValid;
-}
-
-/**
- * Validiert das Kategorie-Feld.
- *
- * @returns {boolean} True, wenn das Kategorie-Feld gültig ist, sonst false.
- */
-function validateCategory() {
-    const categoryField = fields.find(field => field.id === 'category');
-    let isValid = true;
-
-    if (categoryField.element.value.trim() === "") {
-        (categoryField.fieldElement || categoryField.element).style.border = '1px solid rgba(255, 129, 144, 1)';
-        showErrorMessageCategory('This field is required');
-        isValid = false;
-    } else {
-        (categoryField.fieldElement || categoryField.element).style.border = '1px solid rgba(41, 171, 226, 1)';
-        removeErrorMessageCategory();
-    }
-    return isValid;
-}
-
-/**
- * Verhindert das Weiterleiten von Klick-Ereignissen an übergeordnete Elemente.
- *
- * @param {Event} event - Das Click-Event.
- */
-function preventClickPropagation(event) {
-    event.stopPropagation();
-}
-
-/**
- * Handhabt das Absenden des Formulars zum Erstellen eines neuen Tasks.
- *
- * @param {Event} event - Das Submit-Event.
- */
-document.getElementById('recipeForm').onsubmit = function (event) {
-    event.preventDefault();
-    createTask();
-};
-
-/**
- * Zeigt eine Fehlermeldung für ein bestimmtes Feld an.
- *
- * @param {HTMLElement} field - Das DOM-Element des Feldes.
- * @param {string} message - Die Fehlermeldung, die angezeigt werden soll.
- */
-function showErrorMessage(field, message) {
-    let errorElement = field.nextElementSibling;
-    if (!errorElement || !errorElement.classList.contains('error-message')) {
-        errorElement = document.createElement('div');
-        errorElement.className = 'error-message';
-        field.parentNode.insertBefore(errorElement, field.nextSibling);
-    }
-    errorElement.textContent = message;
-}
-
-/**
- * Entfernt eine Fehlermeldung von einem bestimmten Feld.
- *
- * @param {HTMLElement} field - Das DOM-Element des Feldes.
- */
-function removeErrorMessage(field) {
-    let errorElement = field.nextElementSibling;
-    if (errorElement && errorElement.classList.contains('error-message')) {
-        errorElement.remove();
-    }
-}
-
-/**
- * Führt eine POST-Anfrage aus, um Daten an einen bestimmten Pfad zu senden.
- *
- * @async
- * @param {string} path - Der Pfad, an den die Daten gesendet werden sollen.
- * @param {Object} data - Die Daten, die gesendet werden sollen.
- * @returns {Promise<Object>} Das JSON-Antwortobjekt.
- */
-async function postData(path = "", data = {}) {
-    let response = await fetch(BASE_URL + path + ".json", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data)
-    });
-    return responseAsJson = await response.json();
-}
-
-/**
- * Erstellt eine neue Aufgabe nach der Validierung der Eingabefelder.
- * Baut das neue Aufgabenobjekt, sendet es an den Server, leert die Eingabefelder,
- * zeigt ein Popup an und leitet zur Board-Seite weiter.
+ * Creates a new task object with the status "To do" and saves it to Firebase.
+ * This function is called when the "Create task" button is clicked in the popup.
  */
 async function createTask() {
     if (!validateFields()) return;
-    const newTask = await buildNewTaskObject('to do');
+    const newTask = await buildNewTaskObject('to do'); // Default status is 'to do'
     try {
         const response = await postData("tasks", newTask);
         newTask.firebaseId = response.name;
@@ -435,13 +14,15 @@ async function createTask() {
     } catch (error) {
         console.error("Error creating task:", error);
     }
+
 }
 
+
 /**
- * Holt die zugewiesenen Kontakte für eine Aufgabe aus den ausgewählten Checkboxen.
+ * Gets an array of objects representing the assigned contacts, each with name and ID and color.
+ * It fetches contact data from Firebase and matches the selected contact names with their IDs and color.
  *
- * @async
- * @returns {Promise<Array>} Ein Array von zugewiesenen Kontakten.
+ * @returns {Promise<Array<object>>} A promise that resolves with an array of assigned contact objects.
  */
 async function getAssignedContacts() {
     const assignedContacts = [];
@@ -463,10 +44,11 @@ async function getAssignedContacts() {
     return assignedContacts;
 }
 
+
 /**
- * Holt die Unteraufgaben aus der Unteraufgabenliste im DOM und erstellt ein Objekt daraus.
+ * Gets an object of subtask objects from the subtask list, each with an ID, description, and isChecked status.
  *
- * @returns {Object} Ein Objekt mit den Unteraufgaben.
+ * @returns {object} An object of subtask objects.
  */
 function getSubtasks() {
     const subtasks = {};
@@ -484,9 +66,9 @@ function getSubtasks() {
     return subtasks;
 }
 
+
 /**
- * Zeigt ein Popup an, das bestätigt, dass eine Aufgabe erstellt wurde.
- * Das Popup verschwindet nach 2 Sekunden automatisch.
+ * Shows a popup message indicating that the task has been created successfully.
  */
 function showTaskCreatedPopup() {
     const popup = document.getElementById('taskCreatedPopup');
@@ -496,11 +78,11 @@ function showTaskCreatedPopup() {
     }, 2000);
 }
 
+
 /**
- * Behandelt die Eingabe in einem Feld.
- * Setzt die Rahmenfarbe zurück und entfernt Fehlermeldungen, wenn das Feld nicht leer ist.
+ * Handles the input event on input fields, resetting the border color and removing error messages.
  *
- * @param {Event} event - Das Input-Event.
+ * @param {Event} event - The input event.
  */
 function handleInput(event) {
     const field = event.target;
@@ -510,11 +92,11 @@ function handleInput(event) {
     }
 }
 
+
 /**
- * Behandelt das Verlassen eines Feldes (Blur).
- * Setzt die Rahmenfarbe basierend auf dem Inhalt des Feldes und zeigt ggf. Fehlermeldungen an.
+ * Handles the blur event on input fields, validating the input and displaying error messages if necessary.
  *
- * @param {Event} event - Das Blur-Event.
+ * @param {Event} event - The blur event.
  */
 function handleBlur(event) {
     const field = event.target;
@@ -534,22 +116,42 @@ function handleBlur(event) {
     }
 }
 
-// Event Listener für Input-Ereignisse
+
+/**
+ * Adds input event listeners to the 'title', 'description', 'due-date', and 'category-field' input fields.
+ * The `handleInput` function will be called whenever the user types into these fields.
+ */
 document.getElementById('title').addEventListener('input', handleInput);
 document.getElementById('description').addEventListener('input', handleInput);
 document.getElementById('due-date').addEventListener('input', handleInput);
 document.getElementById('category-field').addEventListener('input', handleInput);
 
-// Event Listener für Blur-Ereignisse
+
+/**
+ * Adds blur event listeners to the 'title', 'description', 'due-date', and 'category-field' input fields.
+ * The `handleBlur` function will be called when the user moves focus away from these fields.
+ */
 document.getElementById('title').addEventListener('blur', handleBlur);
 document.getElementById('description').addEventListener('blur', handleBlur);
 document.getElementById('due-date').addEventListener('blur', handleBlur);
 document.getElementById('category-field').addEventListener('blur', handleBlur);
 
+
 /**
- * Setzt die Priorität einer Aufgabe und aktualisiert die UI entsprechend.
+ * Prevents the default form submission behavior for the form with the ID 'recipeForm'.
+ * This is likely used to handle form submission using JavaScript instead of the default browser behavior.
+ */
+document.getElementById('recipeForm').onsubmit = function (event) {
+    event.preventDefault();
+};
+
+
+//for Prio buttons
+let currentPriority = "medium";
+/**
+ * Sets the priority level for the task.
  *
- * @param {string} level - Die Prioritätsstufe ('urgent', 'medium', 'low').
+ * @param {string} level - The priority level ('urgent', 'medium', or 'low').
  */
 function setPriority(level) {
     const buttons = document.querySelectorAll('.priority-button');
@@ -561,10 +163,11 @@ function setPriority(level) {
     currentPriority = level;
 }
 
+
 /**
- * Setzt die Styles eines Prioritätsbuttons auf den Standard zurück.
+ * Resets the styles of a priority button to their default state.
  *
- * @param {HTMLElement} button - Der Prioritätsbutton, der zurückgesetzt werden soll.
+ * @param {HTMLElement} button - The priority button to reset.
  */
 function resetButtonStyles(button) {
     button.classList.remove('selected');
@@ -583,11 +186,12 @@ function resetButtonStyles(button) {
     }
 }
 
+
 /**
- * Gibt die Farbe für eine gegebene Prioritätsstufe zurück.
+ * Gets the background color for a priority level.
  *
- * @param {string} level - Die Prioritätsstufe ('urgent', 'medium', 'low').
- * @returns {string} Die entsprechende Farbe als RGB-Wert.
+ * @param {string} level - The priority level ('urgent', 'medium', or 'low').
+ * @returns {string} The background color for the priority level.
  */
 function getPriorityColor(level) {
     switch (level) {
@@ -602,10 +206,11 @@ function getPriorityColor(level) {
     }
 }
 
+
 /**
- * Zeigt eine Fehlermeldung für das Kategorie-Feld an.
+ * Shows an error message for the category field.
  *
- * @param {string} message - Die Fehlermeldung, die angezeigt werden soll.
+ * @param {string} message - The error message to display.
  */
 function showErrorMessageCategory(message) {
     const categoryField = document.getElementById('category-dropdown');
@@ -618,8 +223,9 @@ function showErrorMessageCategory(message) {
     errorElement.textContent = message;
 }
 
+
 /**
- * Entfernt die Fehlermeldung für das Kategorie-Feld.
+ * Removes the error message for the category field.
  */
 function removeErrorMessageCategory() {
     const categoryField = document.getElementById('category-dropdown');
@@ -629,10 +235,11 @@ function removeErrorMessageCategory() {
     }
 }
 
+
 /**
- * Wählt eine Kategorie aus und aktualisiert das Kategorie-Feld entsprechend.
+ * Selects a category from the dropdown and updates the input field and styles.
  *
- * @param {string} category - Die ausgewählte Kategorie.
+ * @param {string} category - The selected category.
  */
 function selectCategory(category) {
     const categoryInput = document.getElementById('category');
@@ -643,8 +250,10 @@ function selectCategory(category) {
     removeErrorMessageCategory();
 }
 
+
 /**
- * Initialisiert das Dropdown-Icon für die Kategorie-Auswahl beim Laden des Dokuments.
+ * Ensures the category dropdown icon is set correctly on page load.
+ * If the dropdown is displayed, it sets the icon to 'arrow_drop_up.svg', otherwise to 'arrow_drop_down.svg'.
  */
 document.addEventListener('DOMContentLoaded', () => {
     const dropdown = document.getElementById('category-dropdown');
@@ -656,10 +265,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+
 /**
- * Schließt das Kategorie-Dropdown, wenn ein Klick außerhalb des Dropdowns erfolgt.
- *
- * @param {Event} event - Das Click-Event.
+ * Hides the category dropdown when the user clicks outside of it.
+ * 
+ * @param {Event} event - The click event.
  */
 document.addEventListener('click', function (event) {
     const categoryField = document.querySelector('.category-field');
@@ -669,8 +279,9 @@ document.addEventListener('click', function (event) {
     }
 });
 
+
 /**
- * Fügt eine neue Unteraufgabe zur Unteraufgabenliste hinzu.
+ * Adds a new subtask to the subtask list.
  */
 function addSubtask() {
     const subtaskInput = document.getElementById('subtask-input');
@@ -683,19 +294,21 @@ function addSubtask() {
     toggleEditDeleteVisibility();
 }
 
+
 /**
- * Löscht eine Unteraufgabe aus der Unteraufgabenliste.
+ * Deletes a subtask from the list.
  *
- * @param {HTMLElement} element - Das Element, das geklickt wurde, um die Unteraufgabe zu löschen.
+ * @param {HTMLElement} element - The element that triggered the delete action (e.g., the delete icon).
  */
 function deleteSubtask(element) {
     element.closest('li').remove();
 }
 
+
 /**
- * Bearbeitet eine Unteraufgabe, indem das Bearbeitungsfeld angezeigt wird.
+ * Edits a subtask, replacing its text with an input field for editing.
  *
- * @param {HTMLElement} element - Das Element, das geklickt wurde, um die Unteraufgabe zu bearbeiten.
+ * @param {HTMLElement} element - The element that triggered the edit action.
  */
 function editSubtask(element) {
     const subtask = document.getElementById("subtask-list");
@@ -708,10 +321,11 @@ function editSubtask(element) {
     subtaskInput.focus();
 }
 
+
 /**
- * Speichert die bearbeitete Unteraufgabe und aktualisiert das DOM.
+ * Saves the edited subtask, replacing the input field with the updated text.
  *
- * @param {HTMLElement} element - Das Element, das geklickt wurde, um die Unteraufgabe zu speichern.
+ * @param {HTMLElement} element - The element that triggered the save action.
  */
 function saveSubtask(element) {
     const subtask = document.getElementById("subtask-list");
@@ -724,10 +338,11 @@ function saveSubtask(element) {
     li.innerHTML = generateSavedSubtaskHTML(newText);
 }
 
+
 /**
- * Handhabt das Anzeigen und Verstecken der Bearbeitungs- und Lösch-Icons für Unteraufgaben.
- *
- * @param {Event} event - Das Click-Event.
+ * Toggles the visibility of the edit/delete icons for subtasks.
+ * When a subtask item is clicked, its edit/delete icons are shown.
+ * For all other subtask items, the edit/delete icons are hidden.
  */
 document.addEventListener('click', (event) => {
     const isSubtaskItem = event.target.closest('.subtask-item');
@@ -742,8 +357,9 @@ document.addEventListener('click', (event) => {
     });
 });
 
+
 /**
- * Setzt das Unteraufgaben-Eingabefeld zurück.
+ * Resets the subtask input field to an empty string.
  */
 function resetSubtaskInput() {
     const subtaskInput = document.getElementById('subtask-input');

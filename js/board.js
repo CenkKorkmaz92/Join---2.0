@@ -1,48 +1,23 @@
-/**
- * Array zur Speicherung aller Aufgaben.
- *
- * @type {Array<Object>}
- */
 let tasks = [];
-
-/**
- * Array zur Speicherung aller Kontakte.
- *
- * @type {Array<Object>}
- */
 let contacts = [];
-
-/**
- * Das aktuell gezogene Element in der Desktop-Ansicht.
- *
- * @type {HTMLElement|null}
- */
-let currentDraggedElement = null;
-
-/**
- * Das aktuell gezogene Element in der mobilen Ansicht.
- *
- * @type {HTMLElement|null}
- */
-let currentDraggedElementMobile = null;
-
-/**
- * Flag zur Erkennung, ob die aktuelle Ansicht mobil ist.
- *
- * @type {boolean}
- */
+let currentDraggedElement;
+let currentDraggedElementMobile;
 let isMobile = false;
 
+
 /**
- * Initialisiert das Board, lädt Daten und scrollt zur entsprechenden Sektion.
+ * Initializes the board by updating it with tasks and contacts.
+ * This function is called when the page is loaded.
  */
 async function initBoard() {
   await updateBoard();
   scrollToSection();
 }
 
+
 /**
- * Aktualisiert das Board, indem Aufgaben und Kontakte geladen und das Board gerendert werden.
+ * Updates the board by loading tasks and contacts from Firebase.
+ * It then renders the board and applies settings for mobile devices.
  */
 async function updateBoard() {
   await loadTasksFromFirebase();
@@ -51,8 +26,10 @@ async function updateBoard() {
   checkAndApplyMobileSettings();
 }
 
+
 /**
- * Prüft, ob die aktuelle Ansicht mobil oder tablet ist, und passt die UI entsprechend an.
+ * Checks if the user is on a mobile or tablet device and applies specific settings.
+ * If on a mobile device, category icons are displayed on the task cards.
  */
 function checkAndApplyMobileSettings() {
   isMobile = isMobileOrTablet();
@@ -64,10 +41,11 @@ function checkAndApplyMobileSettings() {
   }
 }
 
+
 /**
- * Bestimmt, ob das aktuelle Gerät ein Mobilgerät oder Tablet ist.
+ * Determines if the current device is a mobile or tablet based on touch capabilities and user agent.
  *
- * @returns {boolean} True, wenn das Gerät mobil oder ein Tablet ist, sonst false.
+ * @returns {boolean} True if the device is a mobile or tablet, false otherwise.
  */
 function isMobileOrTablet() {
   let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -76,8 +54,10 @@ function isMobileOrTablet() {
   return isTouchDevice || isMobileAgent;
 }
 
+
 /**
- * Lädt alle Aufgaben aus Firebase und aktualisiert das lokale Aufgaben-Array.
+ * Loads tasks from Firebase and maps them into the local tasks array.
+ * Each task includes subtasks and assigned users.
  */
 async function loadTasksFromFirebase() {
   try {
@@ -93,8 +73,10 @@ async function loadTasksFromFirebase() {
   }
 }
 
+
 /**
- * Lädt alle Kontakte aus Firebase, sortiert sie alphabetisch und aktualisiert das lokale Kontakte-Array.
+ * Loads contacts from Firebase and sorts them alphabetically by name.
+ * The contacts are stored in the local contacts array.
  */
 async function loadContactsFromFirebase() {
   try {
@@ -110,12 +92,12 @@ async function loadContactsFromFirebase() {
   }
 }
 
+
 /**
- * Aktualisiert den Status einer Aufgabe in Firebase und setzt einen neuen Zeitstempel.
+ * Updates the status and timestamp of a task in Firebase.
  *
- * @async
- * @param {string} firebaseId - Die Firebase-ID der Aufgabe.
- * @param {string} newStatus - Der neue Status der Aufgabe (z.B. "in progress", "done").
+ * @param {string} firebaseId - The Firebase ID of the task to update.
+ * @param {string} newStatus - The new status of the task.
  */
 async function updateTaskStatusInFirebase(firebaseId, newStatus) {
   let newTimestamp = Date.now();
@@ -126,19 +108,21 @@ async function updateTaskStatusInFirebase(firebaseId, newStatus) {
   }
 }
 
+
 /**
- * Holt die Firebase-ID einer Aufgabe anhand ihrer lokalen ID.
+ * Retrieves the Firebase ID for a given task ID.
  *
- * @param {string|number} taskId - Die lokale ID der Aufgabe.
- * @returns {string|null} Die Firebase-ID der Aufgabe oder null, wenn nicht gefunden.
+ * @param {number} taskId - The ID of the task.
+ * @returns {string|null} The Firebase ID of the task, or null if not found.
  */
 function getFirebaseIdByTaskId(taskId) {
   let task = tasks.find((t) => t.id == taskId);
   return task ? task.firebaseId : null;
 }
 
+
 /**
- * Löscht den Inhalt aller Task-Container (To Do, In Progress, Await Feedback, Done).
+ * Clears the inner HTML of all task containers (To Do, In Progress, Await Feedback, Done).
  */
 function clearContainers() {
   let containers = getContainersById();
@@ -148,8 +132,10 @@ function clearContainers() {
   });
 }
 
+
 /**
- * Rendert das gesamte Board, indem es Aufgaben lädt und an die entsprechenden Container anhängt.
+ * Renders the task board by clearing containers and populating them with tasks.
+ * Tasks are sorted by timestamp and placed in their appropriate containers.
  */
 function renderBoard() {
   clearContainers();
@@ -165,11 +151,11 @@ function renderBoard() {
 }
 
 /**
- * Bestimmt den entsprechenden Container für eine Aufgabe basierend auf ihrem Status.
+ * Returns the appropriate container element for a given task status.
  *
- * @param {Object} task - Das Aufgabenobjekt.
- * @param {Object} containers - Ein Objekt, das die verschiedenen Task-Container enthält.
- * @returns {HTMLElement|undefined} Der entsprechende Container für die Aufgabe oder undefined.
+ * @param {Object} task - The task object with a status.
+ * @param {Object} containers - An object containing all task containers.
+ * @returns {HTMLElement|null} The container element for the task's status, or null if not found.
  */
 function getContainerForTaskStatus(task, containers) {
   let containerMap = {
@@ -181,11 +167,12 @@ function getContainerForTaskStatus(task, containers) {
   return containerMap[task.Status];
 }
 
+
 /**
- * Rendert die Unteraufgaben einer einzelnen Aufgabe und berechnet den Fortschritt.
+ * Renders the subtasks of a task, including a progress bar showing completion.
  *
- * @param {Array<Object>} subtasks - Ein Array von Unteraufgaben.
- * @returns {string} Das HTML für die Unteraufgabenanzeige.
+ * @param {Array} subtasks - An array of subtask objects.
+ * @returns {string} The HTML string for the subtask section.
  */
 function renderSingleTaskSubtask(subtasks) {
   if (!subtasks || subtasks.length === 0) return "";
@@ -195,10 +182,11 @@ function renderSingleTaskSubtask(subtasks) {
   return generateSingleTaskSubtaskHtml(progressPercentage, completedSubtasks, totalSubtasks);
 }
 
+
 /**
- * Holt die DOM-Elemente der verschiedenen Task-Container anhand ihrer IDs.
+ * Retrieves all task containers by their IDs.
  *
- * @returns {Object} Ein Objekt mit den DOM-Elementen der Task-Container.
+ * @returns {Object} An object containing the task containers (To Do, In Progress, Await Feedback, Done).
  */
 function getContainersById() {
   return {
@@ -209,8 +197,9 @@ function getContainersById() {
   };
 }
 
+
 /**
- * Überprüft, ob die einzelnen Task-Container leer sind, und fügt bei Bedarf Platzhalter hinzu.
+ * Checks if each task container is empty, and if so, adds a placeholder message.
  */
 function checkIfContainerIsEmpty() {
   const { toDoContainer, inProgressContainer, awaitFeedbackContainer, doneContainer } = getContainersById();
@@ -220,11 +209,12 @@ function checkIfContainerIsEmpty() {
   addPlaceholderIfEmpty(doneContainer, "No tasks Done");
 }
 
+
 /**
- * Fügt einen Platzhaltertext in einen Container ein, wenn dieser leer ist.
+ * Adds a placeholder message to a container if it is empty.
  *
- * @param {HTMLElement} container - Der DOM-Element-Container.
- * @param {string} placeholderText - Der Text, der als Platzhalter angezeigt werden soll.
+ * @param {HTMLElement} container - The container to check.
+ * @param {string} placeholderText - The placeholder text to display if the container is empty.
  */
 function addPlaceholderIfEmpty(container, placeholderText) {
   if (container.innerHTML.trim() === "") {
@@ -232,21 +222,24 @@ function addPlaceholderIfEmpty(container, placeholderText) {
   }
 }
 
+
 /**
- * Sortiert ein Array von Aufgaben basierend auf ihrem Zeitstempel.
+ * Sorts an array of tasks by their timestamp.
  *
- * @param {Array<Object>} tasksArray - Das Array von Aufgaben.
- * @returns {Array<Object>} Das sortierte Array von Aufgaben.
+ * @param {Array} tasksArray - The array of tasks to sort.
+ * @returns {Array} The sorted array of tasks.
  */
 function sortTasksByTimestamp(tasksArray) {
   return tasksArray.sort((a, b) => a.timestamp - b.timestamp);
 }
 
+
 /**
- * Überprüft die Beschreibung einer Aufgabe und gibt das entsprechende HTML zurück.
+ * Returns the HTML for a task's description.
+ * If the description is empty, a hidden span is returned.
  *
- * @param {string} description - Die Beschreibung der Aufgabe.
- * @returns {string} Das HTML für die Aufgabenbeschreibung.
+ * @param {string} description - The task description.
+ * @returns {string} The HTML string for the task description.
  */
 function checkSingleTaskDescription(description) {
   if (!description || description.trim() === '') {
@@ -256,11 +249,12 @@ function checkSingleTaskDescription(description) {
   }
 }
 
+
 /**
- * Überprüft die Kategorie einer Aufgabe und gibt das entsprechende HTML zurück.
+ * Returns the HTML for a task's category.
  *
- * @param {string} category - Die Kategorie der Aufgabe.
- * @returns {string} Das HTML für die Aufgaben-Kategorie.
+ * @param {string} category - The task category (e.g., "Technical Task", "User Story").
+ * @returns {string} The HTML string for the task category section.
  */
 function checkSingleTaskCategory(category) {
   if (category === "Technical Task") {
@@ -272,11 +266,12 @@ function checkSingleTaskCategory(category) {
   }
 }
 
+
 /**
- * Überprüft die Priorität einer Aufgabe und gibt das entsprechende HTML zurück.
+ * Returns the HTML for a task's priority icon.
  *
- * @param {string} priority - Die Priorität der Aufgabe (z.B. "urgent", "medium", "low").
- * @returns {string} Das HTML für die Prioritätsanzeige.
+ * @param {string} priority - The task priority (e.g., "urgent", "medium", "low").
+ * @returns {string} The HTML string for the priority icon.
  */
 function checkSingleTaskPriority(priority) {
   if (!priority) return '';
@@ -292,22 +287,24 @@ function checkSingleTaskPriority(priority) {
   }
 }
 
+
 /**
- * Holt die Hintergrundfarbe eines Kontakts anhand seines Namens.
+ * Retrieves the color associated with a contact's name.
  *
- * @param {string} name - Der Name des Kontakts.
- * @returns {string} Die Hintergrundfarbe des Kontakts.
+ * @param {string} name - The name of the contact.
+ * @returns {string} The color associated with the contact, or an empty string if not found.
  */
 function getColorForSingleContact(name) {
   let contact = contacts.find(contact => contact.name === name);
   return contact ? contact.color : '';
 }
 
+
 /**
- * Generiert die Profil-Badges für die zugewiesenen Kontakte einer Aufgabe.
+ * Generates the HTML for the profile badges of users assigned to a task.
  *
- * @param {Array<Object>} assignedTo - Ein Array von zugewiesenen Kontakten.
- * @returns {string} Das HTML für die Profil-Badges.
+ * @param {Array} assignedTo - An array of user objects assigned to the task.
+ * @returns {string} The HTML string for the profile badges, or an empty string if none are assigned.
  */
 function generateAssignedToProfileBadges(assignedTo) {
   if (assignedTo && assignedTo.length > 0) {
@@ -319,11 +316,12 @@ function generateAssignedToProfileBadges(assignedTo) {
   }
 }
 
+
 /**
- * Generiert die HTML-Elemente für die Profil-Badges der zugewiesenen Kontakte.
+ * Generates the HTML for up to four profile badges for assigned users.
  *
- * @param {Array<Object>} assignedTo - Ein Array von zugewiesenen Kontakten.
- * @returns {string} Das HTML für die Profil-Badges.
+ * @param {Array} assignedTo - An array of user objects assigned to the task.
+ * @returns {string} The HTML string for the profile badges.
  */
 function generateProfileBadgeHtml(assignedTo) {
   return assignedTo.slice(0, 4).map(person => {
@@ -334,42 +332,46 @@ function generateProfileBadgeHtml(assignedTo) {
   }).join('');
 }
 
+
 /**
- * Generiert einen zusätzlichen Zähler für die Anzahl der zugewiesenen Kontakte, wenn diese mehr als 4 sind.
+ * Generates the HTML for displaying the count of additional assigned users if there are more than four.
  *
- * @param {number} length - Die Gesamtanzahl der zugewiesenen Kontakte.
- * @returns {string} Das HTML für den zusätzlichen Zähler oder ein leerer String.
+ * @param {number} length - The total number of assigned users.
+ * @returns {string} The HTML string for the additional assigned user count, or an empty string if not needed.
  */
 function generateAdditionalAssignedToCount(length) {
   return length > 4 ? /*html*/ `<span class="board-card-assigned-more">+${length - 4}</span>` : '';
 }
 
+
 /**
- * Holt die Initialen eines Namens.
+ * Retrieves the initials from a contact's name.
  *
- * @param {string} name - Der vollständige Name.
- * @returns {string} Die Initialen des Namens.
+ * @param {string} name - The full name of the contact.
+ * @returns {string} The initials of the contact.
  */
 function getInitials(name) {
   return name.split(' ').map(n => n[0]).join('');
 }
 
+
 /**
- * Holt die Hintergrundfarbe eines Kontakts anhand seiner ID.
+ * Retrieves the color associated with a contact's ID.
  *
- * @param {string} id - Die ID des Kontakts.
- * @returns {string} Die Hintergrundfarbe des Kontakts.
+ * @param {string} id - The ID of the contact.
+ * @returns {string} The color associated with the contact, or an empty string if not found.
  */
 function getColorForSingleContact(id) {
   let contact = contacts.find(contact => contact.id === id);
   return contact ? contact.color : '';
 }
 
+
 /**
- * Holt den Namen eines Kontakts anhand seiner ID.
+ * Retrieves the name of a contact by their ID.
  *
- * @param {string} id - Die ID des Kontakts.
- * @returns {string} Der Name des Kontakts.
+ * @param {string} id - The ID of the contact.
+ * @returns {string} The name of the contact, or an empty string if not found.
  */
 function getNameForSingleContact(id) {
   let contact = contacts.find(contact => contact.id === id);

@@ -1,136 +1,19 @@
 /**
- * Funktion zum Erstellen einer Aufgabe. Kann basierend auf dem Task-Status geändert werden.
+ * Rotates a task card by adding a CSS class.
  *
- * @type {Function}
- */
-let createTaskFunction = createTask;
-
-/**
- * Öffnet das Popup zum Hinzufügen einer neuen Aufgabe und setzt die entsprechende Erstellungsmethode basierend auf dem Task-Status.
- *
- * @param {string} taskStatus - Der Status der Aufgabe ('to do', 'in progress', 'await feedback').
- */
-function openAddTaskPopup(taskStatus) {
-  let popup = document.getElementById('addTaskPopup');
-  popup.style.display = 'flex';
-  popup.classList.add('show');
-  popup.classList.remove('hidden');
-  document.getElementById('add-task-mobile').classList.add('nav-mobile-links-active');
-  document.getElementById('board-mobile').classList.remove('nav-mobile-links-active');
-  switch (taskStatus) {
-    case 'in progress':
-      createTaskFunction = createTaskInProgress;
-      break;
-    case 'await feedback':
-      createTaskFunction = createTaskAwaitFeedback;
-      break;
-    default:
-      createTaskFunction = createTask;
-  }
-}
-
-/**
- * Schließt das Popup zum Hinzufügen einer neuen Aufgabe.
- */
-function closeAddTaskPopup() {
-  let popup = document.getElementById('addTaskPopup');
-  popup.classList.add('hidden');
-  popup.classList.remove('show');
-  setTimeout(() => {
-    popup.style.display = 'none';
-  }, 400);
-}
-
-/**
- * Schließt das Add-Task-Popup, wenn ein Klick außerhalb des Popups erfolgt.
- *
- * @param {Event} event - Das Click-Event.
- */
-window.addEventListener('click', (event) => {
-  const popup = document.getElementById('addTaskPopup');
-  if (event.target === popup) {
-    closeAddTaskPopup();
-  }
-});
-
-/**
- * Erstellt eine neue Aufgabe mit dem Status "Await Feedback" nach der Validierung der Eingabefelder.
- * Sendet die Aufgabe an Firebase, leert die Eingabefelder, zeigt ein Popup an und leitet zur Board-Seite weiter.
- */
-async function createTaskAwaitFeedback() {
-  if (!validateFields()) return;
-  const newTask = await buildNewTaskObject('await feedback');
-  try {
-    const response = await postData("tasks", newTask);
-    newTask.firebaseId = response.name;
-    clearFields();
-    showTaskCreatedPopup();
-    setTimeout(() => { window.location.href = 'board.html'; }, 2000);
-  } catch (error) {
-    console.error("Error creating task:", error);
-  }
-}
-
-/**
- * Erstellt eine neue Aufgabe mit dem Status "In Progress" nach der Validierung der Eingabefelder.
- * Sendet die Aufgabe an Firebase, leert die Eingabefelder, zeigt ein Popup an und leitet zur Board-Seite weiter.
- */
-async function createTaskInProgress() {
-  if (!validateFields()) return;
-  const newTask = await buildNewTaskObject('in progress');
-  try {
-    const response = await postData("tasks", newTask);
-    newTask.firebaseId = response.name;
-    clearFields();
-    showTaskCreatedPopup();
-    setTimeout(() => { window.location.href = 'board.html'; }, 2000);
-  } catch (error) {
-    console.error("Error creating task:", error);
-  }
-}
-
-/**
- * Baut ein neues Aufgabenobjekt basierend auf den eingegebenen Daten und dem angegebenen Status.
- *
- * @async
- * @param {string} status - Der Status der neuen Aufgabe ('to do', 'in progress', 'await feedback', etc.).
- * @returns {Promise<Object>} Das neu erstellte Aufgabenobjekt.
- */
-async function buildNewTaskObject(status) {
-  const assignedContacts = await getAssignedContacts();
-  const assignedContactsWithIds = {};
-  assignedContacts.forEach(contact => {
-    const generatedId = `-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    assignedContactsWithIds[generatedId] = contact;
-  });
-  return {
-    timestamp: Date.now(),
-    id: Date.now(),
-    Title: document.getElementById('title').value.trim(),
-    Description: document.getElementById('description').value.trim(),
-    Assigned_to: assignedContactsWithIds,
-    Due_date: document.getElementById('due-date').value,
-    Prio: currentPriority,
-    Category: document.getElementById('category').value.trim(),
-    Subtasks: getSubtasks(),
-    Status: status
-  };
-}
-
-/**
- * Dreht eine Aufgabe visuell, indem eine CSS-Klasse hinzugefügt wird.
- *
- * @param {string} taskId - Die ID der Aufgabe, die gedreht werden soll.
+ * @param {number} taskId - The ID of the task to rotate.
  */
 function rotateTask(taskId) {
   let element = document.getElementById(taskId);
   element.classList.add("board-card-rotate");
 }
 
+
 /**
- * Startet das Dragging einer Aufgabe und dreht sie, falls nicht mobil.
+ * Initiates the dragging process for a task card.
+ * Stores the ID of the task being dragged and rotates the task card if the device is not mobile.
  *
- * @param {string} taskId - Die ID der Aufgabe, die gezogen wird.
+ * @param {number} taskId - The ID of the task being dragged. This ID is stored as the current dragged element.
  */
 function startDragging(taskId) {
   currentDraggedElement = taskId;
@@ -139,30 +22,34 @@ function startDragging(taskId) {
   }
 }
 
+
 /**
- * Entfernt die Drehung von einer Aufgabe.
+ * Resets the rotation of a task card by removing a CSS class.
  *
- * @param {HTMLElement} element - Das DOM-Element der Aufgabe.
+ * @param {HTMLElement} element - The task card element to reset.
  */
 function resetRotateTask(element) {
   element.classList.remove("board-card-rotate");
 }
 
+
 /**
- * Entfernt die Drehung von einer Aufgabe in der mobilen Ansicht.
- *
- * @param {string} taskId - Die ID der Aufgabe, die zurückgesetzt werden soll.
- */
+* Resets the rotation of a task card for mobile devices by removing a CSS class.
+*
+* @param {string} taskId - The ID of the task to reset. The function will find the element 
+*                          by this ID and remove the "board-card-rotate" class.
+*/
 function resetRotateTaskMobile(taskId) {
   let element = document.getElementById(taskId);
   element.classList.remove("board-card-rotate");
 }
 
+
 /**
- * Bestimmt den Status einer Aufgabe basierend auf der ID des Drop-Containers.
+ * Maps a drop container ID to a task status.
  *
- * @param {string} dropContainerId - Die ID des Drop-Containers.
- * @returns {string|null} Der entsprechende Status oder null, wenn keiner passt.
+ * @param {string} dropContainerId - The ID of the drop container.
+ * @returns {string|null} The corresponding task status, or null if not found.
  */
 function getStatusFromDropContainerId(dropContainerId) {
   let statusMap = {
@@ -174,12 +61,12 @@ function getStatusFromDropContainerId(dropContainerId) {
   return statusMap[dropContainerId] || null;
 }
 
+
 /**
- * Aktualisiert den Status einer Aufgabe in Firebase.
+ * Updates the status of a task in Firebase if a valid Firebase ID is provided.
  *
- * @async
- * @param {string} firebaseId - Die Firebase-ID der Aufgabe.
- * @param {string} newStatus - Der neue Status der Aufgabe.
+ * @param {string} firebaseId - The Firebase ID of the task to update.
+ * @param {string} newStatus - The new status of the task.
  */
 async function updateTaskStatus(firebaseId, newStatus) {
   if (firebaseId) {
@@ -187,11 +74,12 @@ async function updateTaskStatus(firebaseId, newStatus) {
   }
 }
 
+
 /**
- * Verschiebt eine Aufgabe in einen neuen Status und aktualisiert das Board.
+ * Moves a task to a different status based on the drop container it was dragged to.
+ * After updating the status in Firebase, the board is refreshed.
  *
- * @async
- * @param {string} dropContainerId - Die ID des Ziel-Containers.
+ * @param {string} dropContainerId - The ID of the drop container the task was moved to.
  */
 async function moveTo(dropContainerId) {
   if (!currentDraggedElement) return;
@@ -205,37 +93,42 @@ async function moveTo(dropContainerId) {
   currentDraggedElement = null;
 }
 
+
 /**
- * Erlaubt das Ablegen einer Aufgabe in einem Drop-Container.
+ * Allows a task card to be dropped into a container by preventing the default behavior.
  *
- * @param {DragEvent} ev - Das Drag-Event.
+ * @param {Event} ev - The drag event.
  */
 function allowDrop(ev) {
   ev.preventDefault();
 }
 
+
 /**
- * Hebt einen Drag-Bereich hervor, wenn eine Aufgabe darüber gezogen wird.
+ * Highlights a drag area by adding a CSS class when a task is dragged over it.
  *
- * @param {string} id - Die ID des Drag-Bereichs.
+ * @param {string} id - The ID of the drag area to highlight.
  */
 function addHighlightDragArea(id) {
   let dragArea = document.getElementById(id);
   dragArea.classList.add("board-highlight-drag-area");
 }
 
+
 /**
- * Entfernt die Hervorhebung eines Drag-Bereichs.
+ * Removes the highlight from a drag area by removing a CSS class.
  *
- * @param {string} id - Die ID des Drag-Bereichs.
+ * @param {string} id - The ID of the drag area to unhighlight.
  */
 function removeHighlightDragArea(id) {
   let dragArea = document.getElementById(id);
   dragArea.classList.remove("board-highlight-drag-area");
 }
 
+
 /**
- * Sucht nach Aufgaben basierend auf dem Eingabewert und filtert die angezeigten Aufgaben.
+ * Filters and displays tasks on the board based on the search input.
+ * If no search term is entered, all tasks are shown.
  */
 function searchTasks() {
   let searchField = document.getElementById("boardSearchInput").value.toLowerCase();
@@ -248,10 +141,11 @@ function searchTasks() {
   }
 }
 
+
 /**
- * Zeigt alle Aufgaben an, indem ihre Anzeige auf "flex" gesetzt wird.
+ * Displays all task cards on the board.
  *
- * @param {NodeListOf<HTMLElement>} taskCards - Die Liste der Aufgaben-DOM-Elemente.
+ * @param {NodeList} taskCards - A NodeList of all task cards.
  */
 function showAllTasks(taskCards) {
   taskCards.forEach(taskCard => {
@@ -259,21 +153,24 @@ function showAllTasks(taskCards) {
   });
 }
 
+
 /**
- * Aktualisiert die Sichtbarkeit einer Aufgabe basierend auf einem Filterkriterium.
+ * Updates the visibility of a task card based on whether it should be shown or hidden.
  *
- * @param {HTMLElement} taskCard - Das DOM-Element der Aufgabe.
- * @param {boolean} shouldShow - Gibt an, ob die Aufgabe angezeigt werden soll.
+ * @param {HTMLElement} taskCard - The task card element.
+ * @param {boolean} shouldShow - Whether the task card should be shown or hidden.
  */
 function updateTaskVisibility(taskCard, shouldShow) {
   taskCard.style.display = shouldShow ? "flex" : "none";
 }
 
+
 /**
- * Filtert Aufgaben basierend auf dem Suchbegriff und aktualisiert die Anzeige.
+ * Filters tasks based on the search term and updates their visibility.
+ * If no tasks match the search term, a "No results" message is shown.
  *
- * @param {string} searchField - Der Suchbegriff.
- * @param {NodeListOf<HTMLElement>} taskCards - Die Liste der Aufgaben-DOM-Elemente.
+ * @param {string} searchField - The search term entered by the user.
+ * @param {NodeList} taskCards - A NodeList of all task cards.
  */
 function filterTasks(searchField, taskCards) {
   let matchFound = false;
@@ -287,26 +184,30 @@ function filterTasks(searchField, taskCards) {
   matchFound ? hideNoResultsError() : showNoResultsError();
 }
 
+
 /**
- * Zeigt eine Fehlermeldung an, wenn keine Aufgaben gefunden wurden.
+ * Displays a "No results" error message if no tasks match the search term.
  */
 function showNoResultsError() {
   document.querySelector(".board-no-results").style.display = "flex";
   document.querySelector(".board-search-input").classList.add("board-no-results-error");
 }
 
+
 /**
- * Verbirgt die Fehlermeldung, wenn Ergebnisse gefunden wurden.
+ * Hides the "No results" error message.
  */
 function hideNoResultsError() {
   document.querySelector(".board-no-results").style.display = "none";
   document.querySelector(".board-search-input").classList.remove("board-no-results-error");
 }
 
+
 /**
- * Rendert das Overlay zur mobilen Verschiebung einer Aufgabe.
+ * Renders the "Move Task to" overlay for mobile view.
+ * The overlay allows users to move tasks to different status categories.
  *
- * @param {string} taskId - Die ID der Aufgabe, die verschoben werden soll.
+ * @param {number} taskId - The ID of the task for which the overlay is being rendered.
  */
 function renderMoveToMobileOverlay(taskId) {
   let overlayContainer = document.getElementById("moveToMobileOverlay");
@@ -314,23 +215,25 @@ function renderMoveToMobileOverlay(taskId) {
   overlayContainer.innerHTML = generateMoveToMobileOverlayHtml(taskId);
 }
 
+
 /**
- * Schließt das mobile Verschiebungs-Overlay, wenn ein Klick außerhalb des Overlays erfolgt.
+ * Closes the "Move Task to" mobile overlay if the user clicks outside of the overlay card.
  *
- * @param {Event} event - Das Click-Event.
+ * @param {Event} event - The click event.
  */
 function closeMoveToMobileIfClickOutside(event) {
   let card = document.querySelector('.board-move-to-mobile-card');
   if (!card.contains(event.target)) {
-    closeMoveToMobileOverlay();
+    closeMoveToMobileOevrlay();
   }
 }
 
+
 /**
- * Öffnet das mobile Verschiebungs-Overlay für eine bestimmte Aufgabe.
+ * Opens the "Move Task to" mobile overlay and applies animation effects.
  *
- * @param {Event} event - Das Click-Event.
- * @param {string} taskId - Die ID der Aufgabe, die verschoben werden soll.
+ * @param {Event} event - The event that triggered the overlay.
+ * @param {number} taskId - The ID of the task for which the overlay is being opened.
  */
 function openMoveToMobileOverlay(event, taskId) {
   event.stopPropagation();
@@ -342,8 +245,9 @@ function openMoveToMobileOverlay(event, taskId) {
   showMoveToOverlay(overlay, card);
 }
 
+
 /**
- * Schließt das mobile Verschiebungs-Overlay und setzt den Drehstatus der Aufgabe zurück.
+ * Closes the "Move Task to" mobile overlay with animation effects.
  */
 function closeMoveToMobileOverlay() {
   let overlay = document.getElementById("moveToMobileOverlay");
@@ -355,11 +259,12 @@ function closeMoveToMobileOverlay() {
   }
 }
 
+
 /**
- * Zeigt das mobile Verschiebungs-Overlay an und fügt Animationen hinzu.
+ * Displays the "Move Task to" mobile overlay with a fade-in and slide-in animation.
  *
- * @param {HTMLElement} overlay - Das Overlay-Element.
- * @param {HTMLElement} card - Das Karten-Element innerhalb des Overlays.
+ * @param {HTMLElement} overlay - The overlay element.
+ * @param {HTMLElement} card - The card element within the overlay.
  */
 function showMoveToOverlay(overlay, card) {
   overlay.style.display = "flex";
@@ -367,11 +272,12 @@ function showMoveToOverlay(overlay, card) {
   card.classList.add('slideInMoveToMobile');
 }
 
+
 /**
- * Verbirgt das mobile Verschiebungs-Overlay und entfernt Animationen.
+ * Hides the "Move Task to" mobile overlay with a fade-out and slide-out animation.
  *
- * @param {HTMLElement} overlay - Das Overlay-Element.
- * @param {HTMLElement} card - Das Karten-Element innerhalb des Overlays.
+ * @param {HTMLElement} overlay - The overlay element.
+ * @param {HTMLElement} card - The card element within the overlay.
  */
 function hideMoveToOverlay(overlay, card) {
   card.classList.remove('slideInMoveToMobile');
@@ -385,12 +291,13 @@ function hideMoveToOverlay(overlay, card) {
   }, 300);
 }
 
+
 /**
- * Verschiebt eine Aufgabe zu einem neuen Status in der mobilen Ansicht und aktualisiert das Board.
+ * Moves a task to a new status in the mobile view.
+ * After updating the task status in Firebase, the board is refreshed.
  *
- * @async
- * @param {string} status - Der neue Status der Aufgabe.
- * @param {string} taskId - Die ID der Aufgabe, die verschoben werden soll.
+ * @param {string} status - The new status to move the task to.
+ * @param {number} taskId - The ID of the task being moved.
  */
 async function moveTaskToMobile(status, taskId) {
   let firebaseId = getFirebaseIdByTaskId(taskId);
@@ -401,8 +308,11 @@ async function moveTaskToMobile(status, taskId) {
   closeMoveToMobileOverlay();
 }
 
+
 /**
- * Scrollt zu einer bestimmten Sektion basierend auf der URL-Parameter 'scrollTo'.
+ * Scrolls the page to a specific section based on the 'scrollTo' parameter in the URL.
+ * After scrolling, it removes the 'scrollTo' parameter from the URL to avoid repeated scrolling
+ * on page reloads.
  */
 function scrollToSection() {
   let urlParams = new URLSearchParams(window.location.search);
