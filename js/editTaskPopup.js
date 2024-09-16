@@ -1,6 +1,17 @@
+/**
+ * Array zur Speicherung von Unteraufgaben, die gelöscht werden sollen.
+ *
+ * @type {Array<string>}
+ */
 let subtasksToDelete = [];
 
-
+/**
+ * Bearbeitet eine Aufgabe, indem sie geladen, das Bearbeitungs-Popup gerendert und die Formulare gefüllt werden.
+ *
+ * @async
+ * @param {string} taskId - Die ID der zu bearbeitenden Aufgabe.
+ * @returns {Promise<void>}
+ */
 async function editTask(taskId) {
     const task = await fetchTaskData(taskId);
     if (!task) return;
@@ -14,7 +25,13 @@ async function editTask(taskId) {
     setupEditFormListeners();
 }
 
-
+/**
+ * Holt die Daten einer Aufgabe basierend auf ihrer ID.
+ *
+ * @async
+ * @param {string} taskId - Die ID der Aufgabe.
+ * @returns {Promise<Object|null>} Das Aufgabenobjekt oder null, wenn nicht gefunden.
+ */
 async function fetchTaskData(taskId) {
     const task = await getTaskByIdToEdit(taskId);
     if (!task) {
@@ -24,12 +41,18 @@ async function fetchTaskData(taskId) {
     return task;
 }
 
-
+/**
+ * Leert den Inhalt des Popup-Fensters für Aufgabendetails.
+ */
 function clearPopupContent() {
     document.getElementById('taskDetailsPopup').innerHTML = '';
 }
 
-
+/**
+ * Rendert das Bearbeitungs-Popup für eine Aufgabe.
+ *
+ * @param {Object} task - Das Aufgabenobjekt.
+ */
 function renderEditPopup(task) {
     const editTaskPopupHTML = `
         <div id="editTaskDetailsPopup" class="task-details-content edit-task-details-content" 
@@ -42,7 +65,11 @@ function renderEditPopup(task) {
     document.getElementById('taskDetailsPopup').innerHTML = editTaskPopupHTML;
 }
 
-
+/**
+ * Füllt das Bearbeitungsformular mit den Daten der Aufgabe.
+ *
+ * @param {Object} task - Das Aufgabenobjekt.
+ */
 function populateEditForm(task) {
     document.getElementById('editTitle').value = task.Title;
     document.getElementById('editDescription').value = task.Description;
@@ -50,7 +77,13 @@ function populateEditForm(task) {
     setPrio(task.Prio);
 }
 
-
+/**
+ * Lädt die Kontaktliste und rendert sie im Bearbeitungsmodus.
+ *
+ * @async
+ * @param {Object} task - Das Aufgabenobjekt mit zugewiesenen Kontakten.
+ * @returns {Promise<void>}
+ */
 async function populateContactList(task) {
     const contactList = document.getElementById("contact-list-edit");
     try {
@@ -70,7 +103,9 @@ async function populateContactList(task) {
     }
 }
 
-
+/**
+ * Richtet Event-Listener für die Kontaktliste im Bearbeitungsmodus ein.
+ */
 function setupContactListListeners() {
     const contactList = document.getElementById("contact-list-edit");
     const contactSearch = document.getElementById("contact-search-edit");
@@ -86,14 +121,18 @@ function setupContactListListeners() {
     });
 }
 
-
+/**
+ * Richtet Event-Listener für das Hinzufügen von Unteraufgaben im Bearbeitungsmodus ein.
+ */
 function setupSubtaskInputListener() {
     document.getElementById('subtask-input-edit').addEventListener('keydown', (event) => {
         handleEnterKey(event, addSubtaskEditTask);
     });
 }
 
-
+/**
+ * Richtet Event-Listener für das Bearbeitungsformular ein.
+ */
 function setupEditFormListeners() {
     document.addEventListener('DOMContentLoaded', (event) => {
         const editForm = document.getElementById('editForm');
@@ -109,7 +148,11 @@ function setupEditFormListeners() {
     });
 }
 
-
+/**
+ * Setzt die Priorität einer Aufgabe und aktualisiert die UI entsprechend.
+ *
+ * @param {string} level - Die Prioritätsstufe ('urgent', 'medium', 'low').
+ */
 function setPrio(level) {
     const buttons = document.querySelectorAll('.prio-btn');
     buttons.forEach(button => resetBtnsStyles(button));
@@ -120,7 +163,11 @@ function setPrio(level) {
     currentPriority = level;
 }
 
-
+/**
+ * Setzt die Stile der Prioritätsbuttons zurück.
+ *
+ * @param {HTMLElement} button - Der Button, dessen Stile zurückgesetzt werden sollen.
+ */
 function resetBtnsStyles(button) {
     button.classList.remove('selected');
     button.classList.remove('urgent', 'medium', 'low');
@@ -138,7 +185,6 @@ function resetBtnsStyles(button) {
     }
 }
 
-
 document.addEventListener('DOMContentLoaded', (event) => {
     document.body.addEventListener('submit', function (event) {
         if (event.target.id === 'editForm') {
@@ -147,7 +193,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 
-
+/**
+ * Füllt das Bearbeitungsformular mit den Daten der Aufgabe.
+ *
+ * @param {Object} task - Das Aufgabenobjekt.
+ */
 function populateEditForm(task) {
     document.getElementById('editTitle').value = task.Title;
     document.getElementById('editDescription').value = task.Description;
@@ -155,7 +205,14 @@ function populateEditForm(task) {
     setPrio(task.Prio);
 }
 
-
+/**
+ * Speichert die bearbeitete Aufgabe nach Validierung und Aktualisierung.
+ *
+ * @async
+ * @param {string} taskId - Die ID der Aufgabe.
+ * @param {string} firebaseId - Die Firebase-ID der Aufgabe.
+ * @returns {Promise<void>}
+ */
 async function saveEditTask(taskId, firebaseId) {
     if (!validateFieldsEditTask()) return;
     const originalTask = await fetchOriginalTask(taskId);
@@ -176,7 +233,13 @@ async function saveEditTask(taskId, firebaseId) {
     updateBoard();
 }
 
-
+/**
+ * Holt die ursprüngliche Aufgabe basierend auf der Task-ID.
+ *
+ * @async
+ * @param {string} taskId - Die ID der Aufgabe.
+ * @returns {Promise<Object|null>} Das ursprüngliche Aufgabenobjekt oder null, wenn nicht gefunden.
+ */
 async function fetchOriginalTask(taskId) {
     const originalTask = await getTaskByIdToEdit(taskId);
     if (!originalTask) {
@@ -186,7 +249,12 @@ async function fetchOriginalTask(taskId) {
     return originalTask;
 }
 
-
+/**
+ * Validiert die Unteraufgaben einer Aufgabe.
+ *
+ * @param {Object} originalTask - Das ursprüngliche Aufgabenobjekt.
+ * @returns {boolean} True, wenn alle Unteraufgaben gültig sind, sonst false.
+ */
 function validateSubtasks(originalTask) {
     const subtasks = getSubtasksEditTask(originalTask);
     for (const subtaskId in subtasks) {
@@ -198,14 +266,23 @@ function validateSubtasks(originalTask) {
     return true;
 }
 
-
+/**
+ * Hebt eine leere Unteraufgabe hervor, indem die Rahmenfarbe geändert wird.
+ *
+ * @param {string} subtaskId - Die ID der Unteraufgabe.
+ */
 function highlightEmptySubtask(subtaskId) {
     const subtaskItem = document.querySelector(`.subtask-item[data-subtask-id="${subtaskId}"]`);
     const subtaskInput = subtaskItem.querySelector('.input-field-editing');
     subtaskInput.style.borderBottom = '2px solid rgb(255, 129, 144)';
 }
 
-
+/**
+ * Erstellt das aktualisierte Aufgabenobjekt basierend auf den Formulareingaben.
+ *
+ * @param {Object} originalTask - Das ursprüngliche Aufgabenobjekt.
+ * @returns {Object} Das aktualisierte Aufgabenobjekt.
+ */
 function createUpdatedTask(originalTask) {
     const updatedTask = { ...originalTask };
     updatedTask.Title = document.getElementById('editTitle').value;
@@ -219,7 +296,14 @@ function createUpdatedTask(originalTask) {
     return updatedTask;
 }
 
-
+/**
+ * Aktualisiert eine Aufgabe in Firebase.
+ *
+ * @async
+ * @param {string} firebaseId - Die Firebase-ID der Aufgabe.
+ * @param {Object} updatedTask - Das aktualisierte Aufgabenobjekt.
+ * @returns {Promise<void>}
+ */
 async function updateTaskInFirebase(firebaseId, updatedTask) {
     try {
         await putData(`tasks/${firebaseId}`, updatedTask);
@@ -228,7 +312,12 @@ async function updateTaskInFirebase(firebaseId, updatedTask) {
     }
 }
 
-
+/**
+ * Validiert das Fälligkeitsdatum einer bearbeiteten Aufgabe.
+ *
+ * @param {string} editDueDate - Das zu validierende Fälligkeitsdatum im Format 'YYYY-MM-DD'.
+ * @returns {string} Eine Fehlermeldung, wenn das Datum ungültig ist, sonst ein leerer String.
+ */
 function validateDueDateEdit(editDueDate) {
     const datePattern = /^\d{4}-\d{2}-\d{2}$/;
     if (!datePattern.test(editDueDate)) {
@@ -242,12 +331,20 @@ function validateDueDateEdit(editDueDate) {
     return '';
 }
 
-
+/**
+ * Validiert alle relevanten Felder im Bearbeitungsformular.
+ *
+ * @returns {boolean} True, wenn alle Felder gültig sind, sonst false.
+ */
 function validateFieldsEditTask() {
     return validateEditTitle() && validateEditDueDate();
 }
 
-
+/**
+ * Validiert das Fälligkeitsdatum im Bearbeitungsformular.
+ *
+ * @returns {boolean} True, wenn das Datum gültig ist, sonst false.
+ */
 function validateEditDueDate() {
     let isValid = true;
     const dueDateInput = document.getElementById('editDueDate');

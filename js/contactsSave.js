@@ -1,3 +1,7 @@
+/**
+ * Handhabt das Hinzufügen eines neuen Kontakts.
+ * Liest die Eingabewerte, validiert die Eingaben und erstellt einen neuen Kontakt.
+ */
 function handleAddNewContact() {
     const name = document.getElementById('newContactName').value;
     let email = document.getElementById('newContactEmail').value;
@@ -11,7 +15,11 @@ function handleAddNewContact() {
     createNewContact(name, email, phone);
 }
 
-
+/**
+ * Erstellt einen neuen Kontakt nach der Validierung der Eingaben.
+ *
+ * @async
+ */
 async function createNewContact() {
     const { name, email, phone } = getInputValues();
     clearErrorMessages();
@@ -25,7 +33,11 @@ async function createNewContact() {
     }
 }
 
-
+/**
+ * Holt die Eingabewerte für einen neuen Kontakt.
+ *
+ * @returns {Object} Ein Objekt mit den Eingabewerten für Name, E-Mail und Telefon.
+ */
 function getInputValues() {
     const email = document.getElementById('newContactEmail').value.toLowerCase();
     return {
@@ -35,18 +47,23 @@ function getInputValues() {
     };
 }
 
-
+// Event Listener für das Laden des Dokuments und Hinzufügen von Klick-Events zu Kontakten
 document.addEventListener('DOMContentLoaded', (event) => {
     const form = document.getElementById('addNewContactForm');
     if (form) {
-        form.addEventListener('submit', function(event) {
+        form.addEventListener('submit', function (event) {
             event.preventDefault();
             handleAddNewContact();
         });
     }
 });
 
-
+/**
+ * Überprüft, ob die E-Mail-Adresse oder Telefonnummer eines neuen Kontakts bereits existiert.
+ *
+ * @param {string} email - Die E-Mail-Adresse des neuen Kontakts.
+ * @returns {boolean} True, wenn ein Duplikat gefunden wurde, sonst false.
+ */
 function checkForDuplicates(email) {
     let hasError = false;
     const emailInputField = document.getElementById('newContactEmail');
@@ -64,7 +81,15 @@ function checkForDuplicates(email) {
     return hasError;
 }
 
-
+/**
+ * Verarbeitet die Erstellung eines neuen Kontakts und speichert ihn in der Datenbank.
+ *
+ * @async
+ * @param {string} name - Der Name des neuen Kontakts.
+ * @param {string} email - Die E-Mail-Adresse des neuen Kontakts.
+ * @param {string} phone - Die Telefonnummer des neuen Kontakts.
+ * @returns {Promise<void>}
+ */
 async function processNewContact(name, email, phone) {
     const contactId = generateRandomId();
     const newContact = createContactObject(name, email.toLowerCase(), phone, contactId);
@@ -75,21 +100,34 @@ async function processNewContact(name, email, phone) {
     await loadContacts();
 }
 
-
+/**
+ * Überprüft, ob eine E-Mail-Adresse bereits in den Kontakten existiert.
+ *
+ * @param {string} email - Die zu überprüfende E-Mail-Adresse.
+ * @returns {boolean} True, wenn die E-Mail-Adresse dupliziert ist, sonst false.
+ */
 function isEmailDuplicate(email) {
     return contacts.some(contact => contact.email === email);
 }
 
-
+/**
+ * Generiert eine zufällige UUID.
+ *
+ * @returns {string} Eine zufällige UUID.
+ */
 function generateRandomId() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
         const r = Math.random() * 16 | 0;
         const v = c == 'x' ? r : (r & 0x3 | 0x8);
         return v.toString(16);
     });
 }
 
-
+/**
+ * Zeigt eine Erfolgsnachricht nach der erfolgreichen Erstellung eines Kontakts an.
+ *
+ * @returns {Promise<void>}
+ */
 function successfullCreationContact() {
     return new Promise((resolve) => {
         let overlay = document.getElementById('createContactSuccessfull');
@@ -108,7 +146,11 @@ function successfullCreationContact() {
     });
 }
 
-
+/**
+ * Speichert die bearbeiteten Kontaktdaten nach der Validierung.
+ *
+ * @async
+ */
 async function saveEditingContact() {
     const name = document.getElementById('contactName').value;
     const email = document.getElementById('contactMailAdress').value;
@@ -135,7 +177,14 @@ async function saveEditingContact() {
     }
 }
 
-
+/**
+ * Aktualisiert einen Kontakt in allen zugewiesenen Aufgaben.
+ *
+ * @async
+ * @param {string} contactId - Die ID des Kontakts, der aktualisiert werden soll.
+ * @param {Object} updatedContactData - Die aktualisierten Daten des Kontakts.
+ * @returns {Promise<void>}
+ */
 async function updateContactInTasks(contactId, updatedContactData) {
     try {
         const tasks = await getData('tasks');
@@ -147,12 +196,18 @@ async function updateContactInTasks(contactId, updatedContactData) {
     }
 }
 
-
+/**
+ * Verarbeitet die Aufgaben, indem die zugewiesenen Kontakte aktualisiert werden.
+ *
+ * @param {Object} tasks - Das Objekt mit allen Aufgaben.
+ * @param {string} contactId - Die ID des Kontakts, der aktualisiert werden soll.
+ * @param {Object} updatedContactData - Die aktualisierten Daten des Kontakts.
+ * @returns {Object} Das aktualisierte Aufgabenobjekt.
+ */
 function processTasks(tasks, contactId, updatedContactData) {
     const updatedTasks = {};
     for (const [taskId, task] of Object.entries(tasks)) {
         const updatedAssignedTo = updateAssignedTo(task.Assigned_to, contactId, updatedContactData);
-
         updatedTasks[taskId] = {
             ...task,
             Assigned_to: updatedAssignedTo
@@ -161,7 +216,14 @@ function processTasks(tasks, contactId, updatedContactData) {
     return updatedTasks;
 }
 
-
+/**
+ * Aktualisiert die zugewiesenen Kontakte einer Aufgabe.
+ *
+ * @param {Object|Array} assignedTo - Die aktuell zugewiesenen Kontakte.
+ * @param {string} contactId - Die ID des Kontakts, der aktualisiert werden soll.
+ * @param {Object} updatedContactData - Die aktualisierten Daten des Kontakts.
+ * @returns {Object|Array} Die aktualisierten zugewiesenen Kontakte.
+ */
 function updateAssignedTo(assignedTo, contactId, updatedContactData) {
     if (Array.isArray(assignedTo)) {
         return assignedTo.map(contact =>
@@ -177,17 +239,31 @@ function updateAssignedTo(assignedTo, contactId, updatedContactData) {
     return assignedTo;
 }
 
-
+/**
+ * Speichert die aktualisierten Aufgaben in der Datenbank.
+ *
+ * @async
+ * @param {Object} updatedTasks - Das Objekt mit den aktualisierten Aufgaben.
+ * @returns {Promise<void>}
+ */
 async function saveUpdatedTasks(updatedTasks) {
     await putData('tasks', updatedTasks);
 }
 
-
+/**
+ * Holt die ursprüngliche Kontakt-ID aus dem Bearbeitungs-Overlay.
+ *
+ * @returns {string} Die ursprüngliche Kontakt-ID.
+ */
 function getOriginalContactId() {
     return document.getElementById('editContact').dataset.originalContactId;
 }
 
-
+/**
+ * Erstellt ein Objekt mit den aktualisierten Kontaktdaten aus den Eingabefeldern.
+ *
+ * @returns {Object} Das Objekt mit den aktualisierten Kontaktdaten.
+ */
 function createContactData() {
     return {
         id: getOriginalContactId(),
@@ -198,12 +274,24 @@ function createContactData() {
     };
 }
 
-
+/**
+ * Aktualisiert einen Kontakt in der Datenbank.
+ *
+ * @async
+ * @param {string} originalContactId - Die ursprüngliche ID des Kontakts.
+ * @param {Object} contactData - Die aktualisierten Kontaktdaten.
+ * @returns {Promise<void>}
+ */
 async function updateContactInDatabase(originalContactId, contactData) {
     await saveDataToFirebase(originalContactId, contactData);
 }
 
-
+/**
+ * Aktualisiert einen bestehenden Kontakt im lokalen Kontakt-Array.
+ *
+ * @param {string} id - Die ID des Kontakts, der aktualisiert werden soll.
+ * @param {Object} contactData - Die aktualisierten Kontaktdaten.
+ */
 function updateExistingContact(id, contactData) {
     const index = contacts.findIndex(contact => contact.id === id);
     if (index !== -1) {

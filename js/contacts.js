@@ -1,9 +1,36 @@
+/**
+ * Array zur Speicherung aller Kontakte.
+ *
+ * @type {Array<Object>}
+ */
 let contacts = [];
+
+/**
+ * Der aktuelle Buchstabe, der in der Kontaktliste angezeigt wird.
+ *
+ * @type {string}
+ */
 let currentLetter = '';
+
+/**
+ * HTML-Inhalt für die Kontaktliste.
+ *
+ * @type {string}
+ */
 let html = '';
+
+/**
+ * Das aktuell ausgewählte Kontakt-Element im DOM.
+ *
+ * @type {HTMLElement|null}
+ */
 let selectedContactElement = null;
 
-
+/**
+ * Initialisiert die Kontaktverwaltung, lädt Daten und richtet die Benutzeroberfläche ein.
+ *
+ * @async
+ */
 async function initContacts() {
     displayDesktopSidebar();
     displayHeader();
@@ -14,7 +41,11 @@ async function initContacts() {
     loadContacts();
 }
 
-
+/**
+ * Generiert eine zufällige Hexadezimalfarbe.
+ *
+ * @returns {string} Eine zufällige Hexadezimalfarbe im Format '#RRGGBB'.
+ */
 function getRandomColor() {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -24,7 +55,11 @@ function getRandomColor() {
     return color;
 }
 
-
+/**
+ * Lädt alle Kontakte aus der Datenquelle und rendert die Kontaktliste.
+ *
+ * @async
+ */
 async function loadContacts() {
     try {
         const data = await getData('contacts');
@@ -41,8 +76,11 @@ async function loadContacts() {
     }
 }
 
-
+/**
+ * Rendert die Kontaktliste im DOM, gruppiert nach dem ersten Buchstaben des Namens.
+ */
 function renderContactList() {
+    const loadContactMenu = document.getElementById('loadContactMenu'); // Annahme: Dieses Element existiert im DOM
     loadContactMenu.innerHTML = '';
     currentLetter = '';
     html = '';
@@ -57,7 +95,12 @@ function renderContactList() {
     loadContactMenu.innerHTML = html;
 }
 
-
+/**
+ * Setzt eine Fehlermeldung für ein bestimmtes Element.
+ *
+ * @param {string} elementId - Die ID des Elements, für das die Fehlermeldung gesetzt werden soll.
+ * @param {string} message - Die Fehlermeldung, die angezeigt werden soll.
+ */
 function setErrorMessage(elementId, message) {
     const errorElement = document.getElementById(elementId);
     if (errorElement) {
@@ -69,7 +112,9 @@ function setErrorMessage(elementId, message) {
     }
 }
 
-
+/**
+ * Entfernt alle Fehlermeldungen und Fehlerklassen aus den Eingabefeldern.
+ */
 function clearErrorMessages() {
     const errorElements = document.querySelectorAll('.form-error-message');
     errorElements.forEach(element => {
@@ -81,7 +126,15 @@ function clearErrorMessages() {
     });
 }
 
-
+/**
+ * Erstellt ein Kontaktobjekt mit den gegebenen Daten.
+ *
+ * @param {string} name - Der Name des Kontakts.
+ * @param {string} email - Die E-Mail-Adresse des Kontakts.
+ * @param {string} phone - Die Telefonnummer des Kontakts.
+ * @param {string} id - Die eindeutige ID des Kontakts.
+ * @returns {Object} Das erstellte Kontaktobjekt.
+ */
 function createContactObject(name, email, phone, id) {
     return {
         id,
@@ -92,13 +145,19 @@ function createContactObject(name, email, phone, id) {
     };
 }
 
-
+/**
+ * Schließt das Bearbeitungsfenster für Kontakte.
+ */
 function closeEditContact() {
     const addNewContactContainer = document.getElementById('editContact');
     addNewContactContainer.style.display = 'none';
 }
 
-
+/**
+ * Handhabt die Anzeige der Kontaktdetails, abhängig von der Bildschirmgröße.
+ *
+ * @param {string} id - Die ID des Kontakts, dessen Details angezeigt werden sollen.
+ */
 function handleShowContactDetail(id) {
     if (window.innerWidth >= 850) {
         showContactDetail(id);
@@ -108,7 +167,11 @@ function handleShowContactDetail(id) {
     }
 }
 
-
+/**
+ * Zeigt die Details eines Kontakts im Desktop-Layout an.
+ *
+ * @param {string} id - Die ID des Kontakts, dessen Details angezeigt werden sollen.
+ */
 function showContactDetail(id) {
     const user = contacts.find(u => u.id === id);
     const contactDetail = document.getElementById('contactDetail');
@@ -124,7 +187,9 @@ function showContactDetail(id) {
     }
 }
 
-
+/**
+ * Verbirgt die Kontaktliste im responsiven Layout.
+ */
 function hideContactList() {
     const contactList = document.getElementById('contactListResponsive');
     if (contactList) {
@@ -132,7 +197,11 @@ function hideContactList() {
     }
 }
 
-
+/**
+ * Zeigt die Kontaktdetails im mobilen Layout an.
+ *
+ * @param {string} id - Die ID des Kontakts, dessen Details angezeigt werden sollen.
+ */
 function showContactDetailSmallScreen(id) {
     const user = contacts.find(u => u.id === id);
     const contactDetail = document.getElementById('contactDetail');
@@ -142,17 +211,21 @@ function showContactDetailSmallScreen(id) {
     }
 }
 
-
+// Event Listener für das Laden des Dokuments und Hinzufügen von Klick-Events zu Kontakten
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.single-contact').forEach(contactElement => {
-        contactElement.onclick = function() {
+        contactElement.onclick = function () {
             const name = this.getAttribute('data-name');
             handleShowContactDetail(name);
         };
     });
 });
 
-
+/**
+ * Öffnet das Bearbeitungsfenster für einen bestimmten Kontakt.
+ *
+ * @param {string} contactId - Die ID des Kontakts, der bearbeitet werden soll.
+ */
 function openEditingContact(contactId) {
     const user = contacts.find(u => u.id === contactId);
     if (user) {
@@ -166,13 +239,23 @@ function openEditingContact(contactId) {
     }
 }
 
-
+/**
+ * Sortiert die Kontakte alphabetisch und rendert die Kontaktliste erneut.
+ */
 function sortAndRenderContacts() {
     contacts.sort((a, b) => a.name.localeCompare(b.name));
     renderContactList();
 }
 
-
+/**
+ * Aktualisiert die Kontaktliste basierend auf den übergebenen Parametern.
+ * - Wenn ein Objekt mit einer 'id' übergeben wird, wird der bestehende Kontakt aktualisiert.
+ * - Wenn ein String und ein Objekt übergeben werden, wird der bestehende Kontakt aktualisiert.
+ * - Wenn ein Objekt ohne 'id' übergeben wird, wird ein neuer Kontakt hinzugefügt.
+ *
+ * @param {Object|string} param1 - Entweder ein Kontaktobjekt mit einer 'id' oder die ID des Kontakts.
+ * @param {Object} [param2] - Das Kontaktobjekt, falls param1 eine ID ist.
+ */
 function updateContactList(param1, param2) {
     if (typeof param1 === 'object' && param1.hasOwnProperty('id')) {
         updateExistingContact(param1.id, param1);
@@ -187,7 +270,9 @@ function updateContactList(param1, param2) {
     sortAndRenderContacts();
 }
 
-
+/**
+ * Löscht die Kontaktinformationen aus den Eingabefeldern und setzt das Profilbild zurück.
+ */
 function clearContactInfo() {
     const userName = document.getElementById('contactName');
     const userMail = document.getElementById('contactMailAdress');

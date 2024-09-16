@@ -1,3 +1,9 @@
+/**
+ * Generates the HTML content for the task details popup.
+ * 
+ * @param {Object} task - The task object containing the details.
+ * @returns {string} The HTML string for the popup content.
+ */
 function generateTaskDetailsPopupHTML(task) {
     return /*html*/ `
         <div class="task-details-content " data-task-id="${task.id}">
@@ -45,6 +51,12 @@ function generateTaskDetailsPopupHTML(task) {
 }
 
 
+/**
+ * Generates the HTML for the edit task form.
+ * 
+ * @param {Object} task - The task object containing the task details.
+ * @returns {string} The HTML string for the edit task form.
+ */
 function generateEditTaskFormHTML(task) {
     return `
          <form id="editForm" class="add-task-container-popup width-pop-up">
@@ -142,6 +154,13 @@ function generateEditTaskFormHTML(task) {
 }
 
 
+/**
+ * Generates the HTML for a list of subtasks.
+ * 
+ * @param {Object} subtasks - An object containing subtask data, where keys are subtask IDs and values are subtask objects.
+ * @param {Object} task - The parent task object containing the subtasks.
+ * @returns {string} The HTML string representing the subtask list.
+ */
 function generateSubtaskListHTML(subtasks, task) {
     let html = '';
     for (const subtaskId in subtasks) {
@@ -162,6 +181,11 @@ function generateSubtaskListHTML(subtasks, task) {
 }
 
 
+/**
+  * Generates the HTML for a saved subtask item.
+  * @param {string} newText - The updated text of the subtask.
+  * @returns {string} The HTML string for the saved subtask item.
+  */
 function generateSavedSubtaskHTMLEditTask(newText) {
     return `
       <div ondblclick="editSubtaskEditTask(this)" class="subtask-text"><li>${newText}</li></div>
@@ -174,6 +198,13 @@ function generateSavedSubtaskHTMLEditTask(newText) {
 }
 
 
+/**
+ * Generates the HTML for a saved subtask item.
+ * 
+ * @param {string} newText - The updated subtask description.
+ * @param {string} originalText - The original subtask description.
+ * @returns {string} The HTML string for the saved subtask item.
+ */
 function generateSavedSubtaskHTML(newText, originalText) {
     return `<span>•</span><div class="subtask-text" ondblclick="editSubtaskEditTask(this, '${originalText}')">${newText}</div>  <div class="edit-delete-icons-edit" style="display: flex;">
         <img src="./assets/icons/edit.svg" alt="Edit" onclick="editSubtaskEditTask(this, '${newText}')">
@@ -184,6 +215,13 @@ function generateSavedSubtaskHTML(newText, originalText) {
 }
 
 
+/**
+ * Generates the HTML for editing a subtask in the edit task popup.
+ * Includes an input field for the new subtask text and buttons for saving and deleting.
+ * 
+ * @param {string} subtaskText - The current text of the subtask being edited.
+ * @returns {string} The HTML string for the edit subtask form.
+ */
 function generateEditSubtaskHTMLEditTask(subtaskText) {
     return `
       <input type="text" class="input-field-editing" value="${subtaskText}">

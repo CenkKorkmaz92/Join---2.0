@@ -1,8 +1,23 @@
+/**
+ * Generiert das HTML für das Popup mit den Details einer Aufgabe.
+ *
+ * @param {Object} task - Das Aufgabenobjekt mit allen notwendigen Details.
+ * @param {number|string} task.id - Die eindeutige Kennung der Aufgabe.
+ * @param {string} task.Category - Die Kategorie der Aufgabe.
+ * @param {string} task.Title - Der Titel der Aufgabe.
+ * @param {string} task.Description - Die Beschreibung der Aufgabe.
+ * @param {string} task.Due_date - Das Fälligkeitsdatum der Aufgabe.
+ * @param {string} task.Prio - Die Priorität der Aufgabe.
+ * @param {Object} task.Assigned_to - Die zugewiesenen Kontakte zur Aufgabe.
+ * @param {Object} task.Subtasks - Die Unteraufgaben der Aufgabe.
+ * @param {string} task.firebaseId - Die Firebase-ID der Aufgabe.
+ * @returns {string} Das HTML-String für das Aufgaben-Detail-Popup.
+ */
 function generateTaskDetailsPopupHTML(task) {
     return /*html*/ `
         <div class="task-details-content " data-task-id="${task.id}">
             <div class="popup-header">
-                <div class="task-category ${checkSingleTaskCategoryPopup(task.Category)}"><span >${task.Category}</span></div>
+                <div class="task-category ${checkSingleTaskCategoryPopup(task.Category)}"><span>${task.Category}</span></div>
                 <img src="./assets/icons/close-contact.svg" alt="Close" class="close-popup-button" onclick="closeTaskDetailsPopup()">
             </div>
             <div class="popup-content-task">
@@ -44,7 +59,20 @@ function generateTaskDetailsPopupHTML(task) {
     `;
 }
 
-
+/**
+ * Generiert das HTML für das Bearbeitungsformular einer Aufgabe.
+ *
+ * @param {Object} task - Das Aufgabenobjekt mit allen notwendigen Details.
+ * @param {number|string} task.id - Die eindeutige Kennung der Aufgabe.
+ * @param {string} task.firebaseId - Die Firebase-ID der Aufgabe.
+ * @param {string} task.Title - Der Titel der Aufgabe.
+ * @param {string} task.Description - Die Beschreibung der Aufgabe.
+ * @param {string} task.Due_date - Das Fälligkeitsdatum der Aufgabe.
+ * @param {string} task.Prio - Die Priorität der Aufgabe.
+ * @param {Object} task.Assigned_to - Die zugewiesenen Kontakte zur Aufgabe.
+ * @param {Object} task.Subtasks - Die Unteraufgaben der Aufgabe.
+ * @returns {string} Das HTML-String für das Bearbeitungsformular der Aufgabe.
+ */
 function generateEditTaskFormHTML(task) {
     return /*html*/`
          <div id="editForm" class="popup-content-edit-task-form">
@@ -135,7 +163,13 @@ function generateEditTaskFormHTML(task) {
      `;
 }
 
-
+/**
+ * Generiert das HTML für die Liste der Unteraufgaben einer Aufgabe.
+ *
+ * @param {Object} subtasks - Das Objekt der Unteraufgaben mit ihren Details.
+ * @param {Object} task - Das Aufgabenobjekt, dem die Unteraufgaben zugeordnet sind.
+ * @returns {string} Das HTML-String für die Liste der Unteraufgaben.
+ */
 function generateSubtaskListHTML(subtasks, task) {
     let html = '';
     for (const subtaskId in subtasks) {
@@ -155,19 +189,30 @@ function generateSubtaskListHTML(subtasks, task) {
     return html;
 }
 
-
+/**
+ * Generiert das HTML für eine gespeicherte Unteraufgabe nach der Bearbeitung.
+ *
+ * @param {string} newText - Der neue Text der Unteraufgabe.
+ * @returns {string} Das HTML-String für die gespeicherte Unteraufgabe.
+ */
 function generateSavedSubtaskHTMLEditTask(newText) {
     return `
-      <div ondblclick="editSubtaskEditTask(this)" class="subtask-text"><li>${newText}</li></div>
-      <div class="edit-delete-icons-edit" style="display: flex;">
-        <img src="./assets/icons/edit.svg" alt="Edit" onclick="editSubtaskEditTask(this)">
+      <input type="text" class="input-field-editing" value="${newText}">
+      <div class="edit-delete">
+        <img src="./assets/icons/done.svg" alt="Done" onclick="saveSubtaskEditTask(this)">
         <div class="vertical-line"></div>
         <img src="./assets/icons/delete.svg" alt="Delete" onclick="deleteSubtaskEditTask(this)">
       </div>
     `;
 }
 
-
+/**
+ * Generiert das HTML für eine gespeicherte Unteraufgabe.
+ *
+ * @param {string} newText - Der neue Text der Unteraufgabe.
+ * @param {string} originalText - Der ursprüngliche Text der Unteraufgabe vor der Bearbeitung.
+ * @returns {string} Das HTML-String für die gespeicherte Unteraufgabe.
+ */
 function generateSavedSubtaskHTML(newText, originalText) {
     return `<span>•</span><div class="subtask-text" ondblclick="editSubtaskEditTask(this, '${originalText}')">${newText}</div>  <div class="edit-delete-icons-edit" style="display: flex;">
         <img src="./assets/icons/edit.svg" alt="Edit" onclick="editSubtaskEditTask(this, '${newText}')">
@@ -177,7 +222,12 @@ function generateSavedSubtaskHTML(newText, originalText) {
     `;
 }
 
-
+/**
+ * Generiert das HTML für das Bearbeitungsfeld einer Unteraufgabe.
+ *
+ * @param {string} subtaskText - Der Text der Unteraufgabe, die bearbeitet werden soll.
+ * @returns {string} Das HTML-String für das Bearbeitungsfeld der Unteraufgabe.
+ */
 function generateEditSubtaskHTMLEditTask(subtaskText) {
     return `
       <input type="text" class="input-field-editing" value="${subtaskText}">

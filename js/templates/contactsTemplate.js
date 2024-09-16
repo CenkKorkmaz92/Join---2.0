@@ -1,3 +1,8 @@
+/**
+ * Öffnet das Formular zum Hinzufügen eines neuen Kontakts.
+ * Erstellt und fügt das HTML-Formular in den Container mit der ID 'newContact' ein
+ * und öffnet das neue Kontaktfenster.
+ */
 function openNewContact() {
     const addNewContactContainer = document.getElementById('newContact');
     addNewContactContainer.innerHTML = /*HTML*/`
@@ -75,7 +80,16 @@ function openNewContact() {
     openNewContactWindow();
 }
 
-
+/**
+ * Generiert das HTML für einen einzelnen Kontakt.
+ *
+ * @param {Object} user - Das Benutzerobjekt mit den Kontaktdaten.
+ * @param {string|number} user.id - Die eindeutige Kennung des Benutzers.
+ * @param {string} user.name - Der Name des Benutzers.
+ * @param {string} user.email - Die E-Mail-Adresse des Benutzers.
+ * @param {string} user.color - Die Hintergrundfarbe für das Profilbild des Benutzers.
+ * @returns {string} Das HTML-String für einen einzelnen Kontakt.
+ */
 function generateContactHTML(user) {
     const initials = user.name.split(' ').map(n => n.charAt(0)).join('');
     return /*HTML*/`
@@ -91,17 +105,23 @@ function generateContactHTML(user) {
     `;
 }
 
-
+/**
+ * Generiert das HTML für die Detailansicht eines Kontakts.
+ *
+ * @param {Object} user - Das Benutzerobjekt mit den Kontaktdaten.
+ * @param {string} bgColor - Die Hintergrundfarbe für das Profilbild des Benutzers.
+ * @returns {string} Das HTML-String für die Kontakt-Detailansicht.
+ */
 function generateContactDetailHTML(user, bgColor) {
     const initials = user.name.split(' ').map(n => n.charAt(0)).join('');
     return /*HTML*/`
         <div class="contact-detail-title">
-         <div class="contact-detail-header">
-            <h2 class="contact-detail-headline">Contact</h2>
-            <span class="contact-detail-separator"></span>
-            <h4 class="contact-detail-text">Better with a team</h4>
-            <span class="contact-detail-seperator-mobile"></span>
-         </div>
+            <div class="contact-detail-header">
+                <h2 class="contact-detail-headline">Contact</h2>
+                <span class="contact-detail-separator"></span>
+                <h4 class="contact-detail-text">Better with a team</h4>
+                <span class="contact-detail-seperator-mobile"></span>
+            </div>
             <div class="contact-detail-card-back-arrow">
                 <img onclick="closeContactDetailCard()" src="./assets/icons/backArrow.svg" alt="">
             </div>
@@ -111,18 +131,18 @@ function generateContactDetailHTML(user, bgColor) {
             <div class="contact-detail-card-user">
                 <span class="contact-detail-card-name">${user.name}</span>
                 <div class="contact-detail-change-section">
-                <button class="contact-detail-edit" onmouseover="changeIcon(this, 'editContactsActive.svg')" 
-                    onmouseout="changeIcon(this, 'edit-contact.svg')" onclick="openEditingContact('${user.id}')">
-                    <img src="./assets/icons/edit-contact.svg" alt="edit" class="contact-detail-change-icons-edit">
-                    <img src="./assets/icons/editContactsActive.svg" alt="edit" class="change-icon-after-hover-detailed-contact">
-                    <span class="contact-detail-edit-text">Edit</span>
-                </button>
-                <button class="contact-detail-delete" onmouseover="changeIcon(this, 'deleteContactActive.svg')" 
-                    onmouseout="changeIcon(this, 'delete-contact.svg')" onclick="openDeletePopUp('${user.id}')">
-                    <img src="./assets/icons/delete-contact.svg" alt="delete" class="contact-detail-change-icons-delete">
-                    <img src="./assets/icons/deleteContactActive.svg" alt="delete" class="change-icon-after-hover-detailed-contact">
-                    <span class="contact-detail-delete-text">Delete</span>
-                </button>
+                    <button class="contact-detail-edit" onmouseover="changeIcon(this, 'editContactsActive.svg')" 
+                        onmouseout="changeIcon(this, 'edit-contact.svg')" onclick="openEditingContact('${user.id}')">
+                        <img src="./assets/icons/edit-contact.svg" alt="edit" class="contact-detail-change-icons-edit">
+                        <img src="./assets/icons/editContactsActive.svg" alt="edit" class="change-icon-after-hover-detailed-contact">
+                        <span class="contact-detail-edit-text">Edit</span>
+                    </button>
+                    <button class="contact-detail-delete" onmouseover="changeIcon(this, 'deleteContactActive.svg')" 
+                        onmouseout="changeIcon(this, 'delete-contact.svg')" onclick="openDeletePopUp('${user.id}')">
+                        <img src="./assets/icons/delete-contact.svg" alt="delete" class="contact-detail-change-icons-delete">
+                        <img src="./assets/icons/deleteContactActive.svg" alt="delete" class="change-icon-after-hover-detailed-contact">
+                        <span class="contact-detail-delete-text">Delete</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -153,7 +173,14 @@ function generateContactDetailHTML(user, bgColor) {
     `;
 }
 
-
+/**
+ * Generiert das HTML für das Bearbeitungsformular eines Kontakts.
+ *
+ * @param {Object} user - Das Benutzerobjekt mit den Kontaktdaten.
+ * @param {string} initials - Die Initialen des Benutzers.
+ * @param {string} bgColor - Die Hintergrundfarbe für das Profilbild des Benutzers.
+ * @returns {string} Das HTML-String für das Kontakt-Bearbeitungsformular.
+ */
 function generateEditContactHTML(user, initials, bgColor) {
     return /*HTML*/`
         <div id="editContactCard" class="edit-contact" onclick="preventClickPropagation(event)">
@@ -223,7 +250,11 @@ function generateEditContactHTML(user, initials, bgColor) {
     `;
 }
 
-
+/**
+ * Gibt das HTML für den Profilcontainer zurück.
+ *
+ * @returns {string} Das HTML-String für den Profilcontainer.
+ */
 function getProfileContainerHTML() {
     return `
         <div class="icon-profile-add-new-contact">
@@ -232,7 +263,12 @@ function getProfileContainerHTML() {
     `;
 }
 
-
+/**
+ * Generiert das HTML für den Buchstabenabschnitt in der Kontaktliste.
+ *
+ * @param {string} letter - Der Buchstabe, der im Abschnitt angezeigt werden soll.
+ * @returns {string} Das HTML-String für den Buchstabenabschnitt.
+ */
 function generateLetterSectionHTML(letter) {
     return `
         <div class="contact-sequence" id="contactList">

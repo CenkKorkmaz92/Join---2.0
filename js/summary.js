@@ -1,6 +1,16 @@
+/**
+ * Array zur Speicherung der Aufgaben.
+ *
+ * @type {Array<Object>}
+ */
 let tasks = [];
 
-
+/**
+ * Initialisiert die Zusammenfassungsseite, lädt Benutzerdaten, zeigt Begrüßungen an und lädt Aufgaben.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
 async function initSummary() {
   await init();
   getGreeting();
@@ -10,7 +20,12 @@ async function initSummary() {
   displaySummaryMetrics();
 }
 
-
+/**
+ * Gibt eine Begrüßungsnachricht basierend auf der aktuellen Uhrzeit zurück.
+ *
+ * @param {number} time - Die aktuelle Stunde im 24-Stunden-Format.
+ * @returns {string} Die entsprechende Begrüßungsnachricht.
+ */
 function getGreetingMessage(time) {
   switch (true) {
     case time >= 0 && time < 6:
@@ -28,7 +43,9 @@ function getGreetingMessage(time) {
   }
 }
 
-
+/**
+ * Zeigt die Begrüßungsnachricht im Desktop-Layout an.
+ */
 function getGreeting() {
   let time = new Date().getHours();
   let greeting = getGreetingMessage(time);
@@ -36,7 +53,9 @@ function getGreeting() {
   document.getElementById("summaryGreeting").innerHTML = greeting;
 }
 
-
+/**
+ * Zeigt den Namen des aktuellen Benutzers in der Zusammenfassung an.
+ */
 function displayUserName() {
   let user = localStorage.getItem("user");
   if (user) {
@@ -49,12 +68,18 @@ function displayUserName() {
   }
 }
 
-
+/**
+ * Fügt ein Komma zur Begrüßungsnachricht hinzu, wenn ein Benutzer eingeloggt ist.
+ *
+ * @returns {string} Ein Komma oder ein leerer String.
+ */
 function addCommaIfUserIsLoggedIn() {
   return localStorage.getItem("user") ? "," : "";
 }
 
-
+/**
+ * Zeigt die Begrüßungsnachricht und den Benutzernamen im mobilen Layout an.
+ */
 function getGreetingAndUserNameMobile() {
   let getGreeting = document.getElementById("summaryGreeting").innerText;
   let getUserName = document.getElementById("summaryGreetingName").innerText;
@@ -69,7 +94,9 @@ function getGreetingAndUserNameMobile() {
   addAnimationToGreetingMobile();
 }
 
-
+/**
+ * Fügt eine Animation zur Begrüßungsnachricht im mobilen Layout hinzu, basierend darauf, ob der Benutzer gerade eingeloggt ist.
+ */
 function addAnimationToGreetingMobile() {
   let loginPage = document.referrer.includes("index.html") || localStorage.getItem('cameFromLogin');
   let greetingContainer = document.querySelector(".summary-greeting-mobile");
@@ -84,14 +111,21 @@ function addAnimationToGreetingMobile() {
   }
 }
 
-
-function displaySummaryMetrics(){
+/**
+ * Zeigt die Zusammenfassungsmetriken an, einschließlich Aufgabenanzahlen und dringenden Aufgaben.
+ */
+function displaySummaryMetrics() {
   updateTaskCounts();
   updateUrgentTaskCount();
   updateUpcomingDeadline();
 }
 
-
+/**
+ * Lädt die Aufgaben von Firebase und speichert sie im `tasks` Array.
+ *
+ * @async
+ * @returns {Promise<void>}
+ */
 async function loadTasksFromFirebase() {
   try {
     const fetchedTasks = await getData("tasks");
@@ -105,12 +139,19 @@ async function loadTasksFromFirebase() {
   }
 }
 
-
+/**
+ * Zählt die Anzahl der Aufgaben mit einem bestimmten Status.
+ *
+ * @param {string} status - Der Status, nach dem gezählt werden soll (z.B. "to do", "done").
+ * @returns {number} Die Anzahl der Aufgaben mit dem angegebenen Status.
+ */
 function countTasksByStatus(status) {
   return tasks.filter(task => task.Status?.toLowerCase() === status).length;
 }
 
-
+/**
+ * Aktualisiert die Aufgabenanzahlen in der Benutzeroberfläche.
+ */
 function updateTaskCounts() {
   let toDoTasks = countTasksByStatus("to do");
   let doneTasks = countTasksByStatus("done");
@@ -125,24 +166,39 @@ function updateTaskCounts() {
   updateTaskCountsText(totalTasks, inProgressTasks);
 }
 
-
+/**
+ * Aktualisiert die Textanzeigen für die Aufgabenanzahlen.
+ *
+ * @param {number} totalTasks - Die Gesamtanzahl der Aufgaben.
+ * @param {number} inProgressTasks - Die Anzahl der Aufgaben, die sich in Bearbeitung befinden.
+ */
 function updateTaskCountsText(totalTasks, inProgressTasks) {
   document.getElementById("taskBoardText").innerHTML = `${totalTasks === 1 ? "Task" : "Tasks"} in <br> Board`;
   document.getElementById("taskProgressText").innerHTML = `${inProgressTasks === 1 ? "Task" : "Tasks"} in <br> Progress`;
 }
 
-
-function countUrgentTasks(){
+/**
+ * Zählt die Anzahl der dringenden Aufgaben.
+ *
+ * @returns {number} Die Anzahl der dringenden Aufgaben.
+ */
+function countUrgentTasks() {
   return tasks.filter(task => task.Prio?.toLowerCase() === "urgent").length;
 }
 
-
+/**
+ * Aktualisiert die Anzahl der dringenden Aufgaben in der Benutzeroberfläche.
+ */
 function updateUrgentTaskCount() {
   let urgentTasks = countUrgentTasks();
   document.getElementById("urgent").innerHTML = urgentTasks;
 }
 
-
+/**
+ * Holt die nächste bevorstehende Frist aus den Aufgaben.
+ *
+ * @returns {Object|null} Die Aufgabe mit dem nächsten bevorstehenden Datum oder null, wenn keine vorhanden ist.
+ */
 function getUpcomingDeadline() {
   let now = new Date();
   let tasksWithFutureDueDate = tasks.filter(task => task.Due_date && new Date(task.Due_date) > now);
@@ -150,7 +206,9 @@ function getUpcomingDeadline() {
   return tasksWithFutureDueDate.length > 0 ? tasksWithFutureDueDate[0] : null;
 }
 
-
+/**
+ * Aktualisiert die Anzeige der nächsten bevorstehenden Frist in der Benutzeroberfläche.
+ */
 function updateUpcomingDeadline() {
   let upcomingDeadlineDate = document.getElementById("upcomingDeadlineDate");
   let upcomingDeadlineText = document.getElementById("upcomingDeadlineText");
@@ -164,10 +222,14 @@ function updateUpcomingDeadline() {
   }
 }
 
-
+/**
+ * Setzt die Anzeige für keine bevorstehende Frist.
+ *
+ * @param {HTMLElement} upcomingDeadlineElement - Das Element, das das Datum anzeigen soll.
+ * @param {HTMLElement} upcomingDeadlineLabel - Das Element, das den Text anzeigen soll.
+ */
 function setNoUpcomingDeadline(upcomingDeadlineElement, upcomingDeadlineLabel) {
   upcomingDeadlineElement.innerHTML = "";
   upcomingDeadlineElement.style.display = "none";
   upcomingDeadlineLabel.innerHTML = "No upcoming deadline";
 }
-

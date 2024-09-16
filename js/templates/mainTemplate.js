@@ -1,3 +1,8 @@
+/**
+ * Generiert das HTML für die Desktop-Seitenleiste.
+ *
+ * @returns {string} Das HTML-String für die Desktop-Seitenleiste.
+ */
 function displayDesktopSidebarHTML() {
     return /*html*/ `
         <div class="sidebar-logo">
@@ -28,7 +33,11 @@ function displayDesktopSidebarHTML() {
     `;
 }
 
-
+/**
+ * Generiert das HTML für den Header der Anwendung.
+ *
+ * @returns {string} Das HTML-String für den Header.
+ */
 function displayHeaderHTML() {
     return /*html*/ `
             <img class="header-logo-mobile" src="./assets/icons/mobile/joinHeaderMobile.svg" alt="">
@@ -50,7 +59,11 @@ function displayHeaderHTML() {
     `;
 }
 
-
+/**
+ * Generiert das HTML für die mobile Navigation.
+ *
+ * @returns {string} Das HTML-String für die mobile Navigation.
+ */
 function displayMobileNavHTML() {
     return /*html*/ `
         <a class="nav-mobile-links" href="./summary.html">
@@ -72,7 +85,11 @@ function displayMobileNavHTML() {
     `;
 }
 
-
+/**
+ * Generiert das HTML für die Landschafts-Warnung auf mobilen Geräten.
+ *
+ * @returns {string} Das HTML-String für die Landschafts-Warnung.
+ */
 function displayLandscapeWarningMobileHTML() {
     return /*html*/ `
     <div class="landscape-warning-container">
@@ -85,7 +102,13 @@ function displayLandscapeWarningMobileHTML() {
     `;
 }
 
-
+/**
+ * Generiert das HTML für ein Lösch-Popup-Fenster.
+ *
+ * @param {string|number} itemId - Die eindeutige Kennung des zu löschenden Elements.
+ * @param {string} deleteFunction - Der Name der Funktion, die beim Bestätigen des Löschens aufgerufen wird.
+ * @returns {string} Das HTML-String für das Lösch-Popup.
+ */
 function openDeletePopUpHtml(itemId, deleteFunction) {
     return /*HTML*/`
         <div class="delete-pop-up-box">

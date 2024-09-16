@@ -1,3 +1,8 @@
+/**
+ * Validiert den Titel eines bearbeiteten Kontakts.
+ *
+ * @returns {boolean} True, wenn der Titel gültig ist, sonst false.
+ */
 function validateEditTitle() {
     let isValid = true;
     const titleInput = document.getElementById('editTitle');
@@ -12,7 +17,12 @@ function validateEditTitle() {
     return isValid;
 }
 
-
+/**
+ * Handhabt die Eingabe in bearbeiteten Feldern.
+ * Ändert die Rahmenfarbe und entfernt Fehlermeldungen, wenn das Feld nicht leer ist.
+ *
+ * @param {Event} event - Das Eingabe-Event.
+ */
 function handleInputEdit(event) {
     const field = event.target;
     if (field.value.trim() !== "") {
@@ -21,7 +31,12 @@ function handleInputEdit(event) {
     }
 }
 
-
+/**
+ * Handhabt das Verlassen eines bearbeiteten Feldes.
+ * Ändert die Rahmenfarbe basierend auf dem Inhalt des Feldes und zeigt Fehlermeldungen an, falls erforderlich.
+ *
+ * @param {Event} event - Das Blur-Event.
+ */
 function handleBlurEdit(event) {
     const field = event.target;
     if (field.value.trim() !== "") {
@@ -35,10 +50,12 @@ function handleBlurEdit(event) {
             removeErrorMessage(field);
         }
     }
-
 }
 
-
+/**
+ * Toggles die Sichtbarkeit der Kontaktliste im Bearbeitungsmodus.
+ * Ändert die Rahmenradien, Icons und die Anzeige der ausgewählten Kontakte basierend auf dem aktuellen Zustand.
+ */
 function toggleContactListEdit() {
     const contactList = document.getElementById("contact-list-edit");
     const contactSearch = document.getElementById("contact-search-edit");
@@ -57,7 +74,10 @@ function toggleContactListEdit() {
     }
 }
 
-
+/**
+ * Filtert die Kontakte im Bearbeitungsmodus basierend auf dem Suchbegriff.
+ * Zeigt nur Kontakte an, deren Namen den Suchbegriff enthalten.
+ */
 function filterContactsEdit() {
     const searchTerm = document.getElementById("contact-search-edit").value.toLowerCase();
     const contactItems = document.querySelectorAll("#contact-list-edit .contact-item");
@@ -72,7 +92,11 @@ function filterContactsEdit() {
     }
 }
 
-
+/**
+ * Schließt die Kontaktliste im Bearbeitungsmodus, wenn außerhalb geklickt wird.
+ *
+ * @param {Event} event - Das Click-Event.
+ */
 function closeContactListOnClickOutsideEdit(event) {
     const contactList = document.getElementById("contact-list-edit");
     const contactSearch = document.getElementById("contact-search-edit");
@@ -87,7 +111,12 @@ function closeContactListOnClickOutsideEdit(event) {
     }
 }
 
-
+/**
+ * Zeigt die ausgewählten Kontakte im Bearbeitungsmodus an.
+ *
+ * @param {Object} task - Das Aufgabenobjekt, das die zugewiesenen Kontakte enthält.
+ * @returns {string} Das HTML zur Anzeige der ausgewählten Kontakte.
+ */
 function displaySelectedContactsEdit(task) {
     let html = '';
     for (const contactId in task.Assigned_to) {
@@ -102,7 +131,13 @@ function displaySelectedContactsEdit(task) {
     return html;
 }
 
-
+/**
+ * Erstellt ein Kontakt-Element im Bearbeitungsmodus und fügt es der Kontaktliste hinzu.
+ *
+ * @param {Object} contact - Das Kontaktobjekt.
+ * @param {HTMLElement} contactList - Das DOM-Element der Kontaktliste.
+ * @param {Array<Object>} assignedContacts - Das Array der zugewiesenen Kontakte.
+ */
 function createContactItemEdit(contact, contactList, assignedContacts) {
     const contactItem = document.createElement("div");
     contactItem.classList.add("contact-item");
@@ -121,7 +156,9 @@ function createContactItemEdit(contact, contactList, assignedContacts) {
     contactList.appendChild(contactItem);
 }
 
-
+/**
+ * Aktualisiert die Anzeige der ausgewählten Kontakte im Bearbeitungsmodus.
+ */
 function updateSelectedContactsEdit() {
     const selectedContactsDiv = document.getElementById("selected-contacts-edit");
     selectedContactsDiv.innerHTML = '';
@@ -142,7 +179,12 @@ function updateSelectedContactsEdit() {
     });
 }
 
-
+/**
+ * Holt die Unteraufgaben eines ursprünglichen Tasks und aktualisiert sie basierend auf den Eingaben im Bearbeitungsmodus.
+ *
+ * @param {Object} originalTask - Das ursprüngliche Aufgabenobjekt.
+ * @returns {Object} Das aktualisierte Unteraufgabenobjekt.
+ */
 function getSubtasksEditTask(originalTask) {
     const subtasks = { ...originalTask.Subtasks };
     document.querySelectorAll("#subtask-list-edit .subtask-item").forEach(item => {
@@ -158,7 +200,12 @@ function getSubtasksEditTask(originalTask) {
     return subtasks;
 }
 
-
+/**
+ * Handhabt den Klick auf eine Kontakt-Checkbox im Bearbeitungsmodus.
+ * Toggle den Status der Checkbox und aktualisiert die ausgewählten Kontakte.
+ *
+ * @param {Event} event - Das Click-Event.
+ */
 function handleContactCheckboxClickEdit(event) {
     const checkbox = event.target.closest(".contact-checkbox");
     if (checkbox) {
@@ -168,7 +215,11 @@ function handleContactCheckboxClickEdit(event) {
     }
 }
 
-
+/**
+ * Speichert die bearbeitete Unteraufgabe und aktualisiert sie in Firebase.
+ *
+ * @param {HTMLElement} element - Das Element, das die Aktion ausgelöst hat.
+ */
 function saveSubtaskEditTask(element) {
     const li = element.closest('li');
     const subtaskInput = li.querySelector('input');
@@ -183,7 +234,12 @@ function saveSubtaskEditTask(element) {
     li.innerHTML = generateSavedSubtaskHTML(newText, originalText);
 }
 
-
+/**
+ * Behandelt eine leere Unteraufgabe im Bearbeitungsmodus.
+ * Entfernt die Unteraufgabe, wenn keine ID vorhanden ist, sonst zeigt einen Fehler an.
+ *
+ * @param {HTMLElement} li - Das Listen-Element der Unteraufgabe.
+ */
 function handleEmptySubtask(li) {
     if (!li.dataset.subtaskId) {
         li.remove();
@@ -193,7 +249,13 @@ function handleEmptySubtask(li) {
     }
 }
 
-
+/**
+ * Aktualisiert die Beschreibung einer Unteraufgabe in Firebase.
+ *
+ * @async
+ * @param {HTMLElement} li - Das Listen-Element der Unteraufgabe.
+ * @param {string} newText - Die neue Beschreibung der Unteraufgabe.
+ */
 async function updateSubtaskInFirebase(li, newText) {
     const taskId = document.getElementById('editTaskDetailsPopup').dataset.taskId;
     const firebaseId = document.getElementById('editTaskDetailsPopup').dataset.firebaseId;
@@ -208,7 +270,12 @@ async function updateSubtaskInFirebase(li, newText) {
     }
 }
 
-
+/**
+ * Öffnet das Bearbeitungsfenster für eine Unteraufgabe und macht das Eingabefeld fokussiert.
+ *
+ * @param {HTMLElement} element - Das Element, das die Aktion ausgelöst hat.
+ * @param {string} originalText - Der ursprüngliche Text der Unteraufgabe.
+ */
 function editSubtaskEditTask(element, originalText) {
     const li = element.closest('li');
     li.dataset.originalText = originalText;
@@ -217,7 +284,12 @@ function editSubtaskEditTask(element, originalText) {
     subtaskInput.focus();
 }
 
-
+/**
+ * Löscht eine Unteraufgabe im Bearbeitungsmodus und markiert sie zur Löschung.
+ *
+ * @async
+ * @param {HTMLElement} element - Das Element, das die Aktion ausgelöst hat.
+ */
 async function deleteSubtaskEditTask(element) {
     const listItem = element.closest('.subtask-item');
     const subtaskId = listItem.dataset.subtaskId;

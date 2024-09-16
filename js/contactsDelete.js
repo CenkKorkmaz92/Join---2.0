@@ -1,3 +1,10 @@
+/**
+ * Löscht einen Kontakt und aktualisiert alle zugewiesenen Aufgaben entsprechend.
+ *
+ * @async
+ * @param {string} contactId - Die ID des zu löschenden Kontakts.
+ * @returns {Promise<void>}
+ */
 async function deleteContactAndUpdateTasks(contactId) {
     try {
         await removeData(`contacts/${contactId}`);
@@ -10,21 +17,33 @@ async function deleteContactAndUpdateTasks(contactId) {
     }
 }
 
-
+/**
+ * Öffnet das Lösch-Popup für einen bestimmten Kontakt.
+ *
+ * @param {string} contactId - Die ID des Kontakts, der gelöscht werden soll.
+ */
 function openDeletePopUp(contactId) {
     let deletePopUp = document.getElementById('deletePopUp');
     deletePopUp.innerHTML = "";
     deletePopUp.innerHTML = openDeletePopUpHtml(contactId, 'deleteContactAndUpdateTasks');
-    deletePopUp.classList.remove('d-none-important'); 
+    deletePopUp.classList.remove('d-none-important');
 }
 
-
+/**
+ * Schließt das Lösch-Popup.
+ */
 function closeDeletePopUp() {
     let deletePopUp = document.getElementById('deletePopUp');
-    deletePopUp.classList.add('d-none-important'); 
+    deletePopUp.classList.add('d-none-important');
 }
 
-
+/**
+ * Entfernt einen Kontakt aus allen zugewiesenen Aufgaben.
+ *
+ * @async
+ * @param {string} contactId - Die ID des Kontakts, der aus den Aufgaben entfernt werden soll.
+ * @returns {Promise<void>}
+ */
 async function removeContactFromTasks(contactId) {
     try {
         const tasks = await getData('tasks');
@@ -34,7 +53,7 @@ async function removeContactFromTasks(contactId) {
             let assignedTo = task.Assigned_to || {};
             if (Array.isArray(assignedTo)) {
                 assignedTo = assignedTo.filter(contact => contact.id !== contactId);
-            } 
+            }
             else if (typeof assignedTo === 'object') {
                 assignedTo = Object.fromEntries(
                     Object.entries(assignedTo).filter(([key, contact]) => contact.id !== contactId)
@@ -51,8 +70,13 @@ async function removeContactFromTasks(contactId) {
     }
 }
 
-
+/**
+ * Handhabt die Löschung eines Kontakts, indem er gelöscht und die Aufgaben aktualisiert werden.
+ *
+ * @async
+ * @param {string} contactId - Die ID des zu löschenden Kontakts.
+ * @returns {Promise<void>}
+ */
 async function handleDeleteContact(contactId) {
     await deleteContactAndUpdateTasks(contactId);
 }
-
